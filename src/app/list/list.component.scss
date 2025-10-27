@@ -1,0 +1,44 @@
+main {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.searchHeader {
+  display: flex;
+  border: 0.1vw solid black;
+  width: 50%;
+  height: 15%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1vw;
+}
+
+.searchContent {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+}
+
+.searchDate {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1vw;
+}
+
+table {
+  width: 100%;
+}
+
+.listTable {
+  margin-top: 3vh;
+  display: flex;
+
+}
