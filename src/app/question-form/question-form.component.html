@@ -1,0 +1,63 @@
+<div class="formHeader">
+  <div class="formDate">
+    <h3>2025-10-28~2025-10-31</h3>
+  </div>
+  <div class="formTitle">
+    <h1>TEST</h1>
+  </div>
+  <div class="formDescription">
+    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Corporis quisquam incidunt odit. Pariatur laboriosam saepe
+    perferendis neque deserunt aliquid ut nihil quod tempora. Quo ipsam distinctio quos repudiandae. Nobis deserunt
+    accusamus porro, tempore perspiciatis iure sit id voluptates maiores repellat dolore in, nisi, consectetur
+    necessitatibus sapiente quibusdam quo modi vero.
+  </div>
+</div>
+
+<div class="formContent">
+  <div class="formUser">
+    <span>姓名：</span><input type="text">
+    <span>手機：</span> <input type="phone">
+    <span>Email：</span> <input type="email">
+    <span>年齡：</span> <input type="text">
+
+  </div>
+
+  <div class="formOptionA">
+    <fieldset style="display: flex; flex-direction: column; gap: 1vw;">
+      <legend>選擇一個最喜歡吃的水果（必填）：</legend>
+
+      <div>
+        <input type="radio" name="fruit" value="apple" checked />
+        <label for="apple">蘋果</label>
+      </div>
+
+      <div>
+        <input type="radio" name="fruit" value="banana" />
+        <label for="banana">香蕉</label>
+      </div>
+
+      <div>
+        <input type="radio" name="fruit" value="grape" />
+        <label for="grape">葡萄</label>
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="formOptionB">
+    <fieldset>
+      <legend>請說明理由：</legend>
+      <textarea style="  padding: 10px;
+        max-width: 100%;
+        line-height: 1.5;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        box-shadow: 1px 1px 1px #999;" name="reason" row="5" cols="30" placeholder="100字以內" maxlength="100"></textarea>
+    </fieldset>
+  </div>
+
+
+  <div class="formButton">
+    <button routerLink="/list">返回</button>
+    <button routerLink="/review">送出</button>
+  </div>
+</div>

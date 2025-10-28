@@ -11,12 +11,11 @@ main {
 .searchHeader {
   display: flex;
   border: 0.1vw solid black;
-  width: 50%;
-  height: 15%;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 1vw;
+  padding: 1vw;
 }
 
 .searchContent {
@@ -33,9 +32,9 @@ main {
   gap: 1vw;
 }
 
-table {
-  width: 100%;
-}
+// table {
+//   width: 100%;
+// }
 
 .listTable {
   margin-top: 3vh;

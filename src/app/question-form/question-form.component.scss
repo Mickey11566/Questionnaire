@@ -1,0 +1,65 @@
+* {
+  background-color: #ddd;
+}
+
+.formHeader {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  .formDate {
+    display: flex;
+    justify-content: flex-end;
+    width: 95%;
+  }
+
+
+  .formTitle {
+    display: flex;
+    justify-content: center;
+  }
+
+  .formDescription {
+    display: flex;
+    justify-content: center;
+    padding: 0 5vw;
+    margin-bottom: 3vh;
+  }
+}
+
+
+.formUser {
+  display: flex;
+  flex-direction: column;
+  // justify-content: center;
+  align-items: start;
+  gap: 0.5vw;
+  margin: 0 5vw;
+
+  input {
+    padding: 1vh 0.5vw;
+    font-size: medium;
+  }
+
+}
+
+.formOptionA {
+  display: flex;
+  // justify-content: center;
+  margin: 2vh 5vw;
+}
+
+.formOptionB {
+  display: flex;
+  // justify-content: center;
+  margin: 2vh 5vw;
+}
+
+.formButton {
+  display: flex;
+  flex-direction: row;
+  gap: 3vw;
+  justify-content: flex-end;
+  margin: 2vh 3vw;
+}
