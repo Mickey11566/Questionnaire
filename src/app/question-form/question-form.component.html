@@ -1,24 +1,21 @@
 <div class="formHeader">
   <div class="formDate">
-    <h3>2025-10-28~2025-10-31</h3>
+    <h3>2025-10-28 ~ 2025-10-31</h3>
   </div>
   <div class="formTitle">
-    <h1>TEST</h1>
+    <h1>{{name}}</h1>
   </div>
   <div class="formDescription">
-    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Corporis quisquam incidunt odit. Pariatur laboriosam saepe
-    perferendis neque deserunt aliquid ut nihil quod tempora. Quo ipsam distinctio quos repudiandae. Nobis deserunt
-    accusamus porro, tempore perspiciatis iure sit id voluptates maiores repellat dolore in, nisi, consectetur
-    necessitatibus sapiente quibusdam quo modi vero.
+    {{description}}
   </div>
 </div>
 
 <div class="formContent">
   <div class="formUser">
-    <span>姓名：</span><input type="text">
-    <span>手機：</span> <input type="phone">
-    <span>Email：</span> <input type="email">
-    <span>年齡：</span> <input type="text">
+    <span>姓名：</span><input [(ngModel)]="inputName" type="text">
+    <span>手機：</span> <input [(ngModel)]="inputPhone" type="phone">
+    <span>Email：</span> <input [(ngModel)]="inputEmail" type="email">
+    <span>年齡：</span> <input [(ngModel)]="inputAge" type="text">
 
   </div>
 
@@ -58,6 +55,6 @@
 
   <div class="formButton">
     <button routerLink="/list">返回</button>
-    <button routerLink="/review">送出</button>
+    <button (click)="submitData()" routerLink="/review">預覽</button>
   </div>
 </div>

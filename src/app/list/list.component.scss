@@ -12,17 +12,19 @@ main {
   display: flex;
   border: 0.1vw solid black;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   gap: 1vw;
   padding: 1vw;
+  border-radius: 0.4vw;
+  margin: 1vh 0;
 }
 
 .searchContent {
   display: flex;
   flex-direction: row;
   align-items: center;
-
+  gap: 1vw;
 }
 
 .searchDate {
