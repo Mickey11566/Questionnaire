@@ -43,3 +43,40 @@ main {
   display: flex;
 
 }
+
+.data-table {
+  width: 40%;
+  border-collapse: collapse; /* 合併邊框 */
+  font-family: Arial, sans-serif;
+}
+
+.data-table th,
+.data-table td {
+  border: none;
+  // border: 1px solid #333333;
+  padding: 8px;
+  white-space: nowrap; /* 不換行 */
+
+  &:last-of-type {
+    text-align: left;
+  }
+}
+
+.data-table th {
+  background-color: #FDC886;
+  color: #333333;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  border-bottom: 2px solid #333333;
+}
+
+.data-table td {
+  border: 1px solid #333333;
+}
+
+
+/* 斑馬紋效果 (使用 highlight-row class) */
+.data-table tbody tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
