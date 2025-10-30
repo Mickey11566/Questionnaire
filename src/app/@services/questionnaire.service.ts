@@ -18,6 +18,7 @@ export class QuestionnaireService {
   inputEmail!: string; //填寫的Email
   inputPhone!: string; //填寫的電話
   inputAge!: number; //填寫的年紀
+  inputContent!: string; //填寫的原因
 
   constructor() { }
 }

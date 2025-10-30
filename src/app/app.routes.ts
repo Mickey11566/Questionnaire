@@ -3,6 +3,7 @@ import { ListComponent } from './list/list.component';
 import { QuestionFormComponent } from './question-form/question-form.component';
 import { ReviewComponent } from './review/review.component';
 import { ResultComponent } from './result/result.component';
+import { LoginComponent } from './login/login.component';
 
 export const routes: Routes = [
   {
@@ -20,7 +21,10 @@ export const routes: Routes = [
   {
     path: "result", component: ResultComponent,
   },
+  {
+    path: "login", component: LoginComponent,
+  },
 
-  // { path: "form/:id", component: QuestionFormComponent },
-  { path: "", component: ListComponent },
+  { path: "", redirectTo: "login", pathMatch: 'prefix' }
+
 ];

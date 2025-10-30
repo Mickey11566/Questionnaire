@@ -13,6 +13,7 @@ export class ReviewComponent {
   userEmail!: string;
   userPhone!: string;
   userAge!: number;
+  userContent!: string;
 
   constructor(private questionnaireService: QuestionnaireService, private router: Router) { }
 
@@ -22,6 +23,7 @@ export class ReviewComponent {
     this.userEmail = this.questionnaireService.inputEmail;
     this.userPhone = this.questionnaireService.inputPhone;
     this.userAge = this.questionnaireService.inputAge;
+    this.userContent = this.questionnaireService.inputContent;
   }
 
   comfirm() {

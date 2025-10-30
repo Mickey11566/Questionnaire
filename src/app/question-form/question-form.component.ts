@@ -18,6 +18,7 @@ export class QuestionFormComponent {
   inputAge!: number;
   description!: string;
   name!: string;
+  inputContent!: string;
 
 
   // 將資料包成json格式 傳送至review
@@ -27,6 +28,8 @@ export class QuestionFormComponent {
     this.questionnaireService.inputPhone = this.inputPhone;
     this.questionnaireService.inputEmail = this.inputEmail;
     this.questionnaireService.inputName = this.inputName;
+    this.questionnaireService.inputContent = this.inputContent;
+
     this.router.navigateByUrl('/review');
   }
 
