@@ -17,7 +17,7 @@
       align-items: center;
       gap: 0.1vw;">
       <h1>User Login</h1>
-      <span style="font-size: medium; font-weight: 500;">Hi, Enter your details to get sign in to your account</span>
+      <p style="font-size: medium; font-weight: 500;">Hi, Enter your details to get sign in to your account</p>
     </div>
     <div style="
     display: flex;
@@ -26,11 +26,11 @@
     align-items: center;
     gap:1vw;
     margin: 5vh 0">
-      <input type="email" placeholder="Enter Email" style="width: 70%;
+      <input type="email" required placeholder="Enter Email" style="width: 70%;
       padding: 2vh 0.5vw;
       font-size: larger;
       border-radius: 5px;">
-      <input type="password" placeholder="Password" style="width: 70%;
+      <input type="password" required placeholder="Password" style="width: 70%;
       padding: 2vh 0.5vw;
       font-size: larger;
       border-radius: 5px;">
@@ -50,3 +50,9 @@
     </div>
   </div>
 </div>
+
+@if(showLoading){
+<div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 5;">
+  <div class="loader"></div>
+</div>
+}

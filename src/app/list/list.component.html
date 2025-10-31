@@ -1,15 +1,29 @@
 <main>
   <div class="searchHeader">
     <div class="searchContent">
-      <label>問卷名稱：</label>
-      <input (keyup)="searchForm()" [(ngModel)]="searchData">
+      <mat-form-field appearance="outline" class="search-form-field">
+        <mat-icon matPrefix>search</mat-icon>
+
+        <input matInput type="text" placeholder="搜尋問卷名稱" (keyup)="searchForm()" [(ngModel)]="searchData">
+
+      </mat-form-field>
     </div>
     <div class="searchDate">
-      <label>統計日期：</label>
-      <input type="date">
+      <mat-form-field>
+        <mat-label>選擇開始日期</mat-label>
+        <input [(ngModel)]="userStartDate" matInput [matDatepicker]="pickerStart" (dateChange)="searchForm()">
+        <mat-datepicker-toggle matIconSuffix [for]="pickerStart"></mat-datepicker-toggle>
+        <mat-datepicker #pickerStart></mat-datepicker>
+      </mat-form-field>
+
       至
-      <input type="date">
-      <button (click)="filterDate()" style="border-radius: 0.5vw;">搜尋</button>
+      <mat-form-field>
+        <mat-label>選擇結束日期</mat-label>
+        <input [(ngModel)]="userEndDate" matInput [matDatepicker]="pickerEnd" (dateChange)="searchForm()">
+        <mat-datepicker-toggle matIconSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+        <mat-datepicker #pickerEnd></mat-datepicker>
+      </mat-form-field>
+
     </div>
   </div>
 
@@ -31,16 +45,23 @@
         <td>{{ item.no }}</td>
         <td>{{ item.name }}</td>
         @if(item.status =="進行中") {
-        <td style="color: #FFA640; font-size: medium; font-weight: 500; text-shadow: 1px 1px #000000;">{{ item.status }}
+        <td
+          style="color: #FFA640;text-align: center; font-size: medium; font-weight: 500; text-shadow: 1px 1px #000000;">
+          {{ item.status }}
         </td>
         } @else {
-        <td>{{ item.status }}</td>
+        <td style="text-align: center;">{{ item.status }}</td>
         }
         <td>{{ item.startDate }}</td>
         <td>{{ item.endDate }}</td>
+        @if(item.status == "已結束") {
         <td>
           <button>{{ item.result }}</button>
         </td>
+        } @else {
+        <td>
+        </td>
+        }
         @if(item.status == "進行中"){
         <td><button>填寫</button></td>
         } @else {
@@ -51,7 +72,7 @@
 
       @empty {
       <tr>
-        <td colspan="8" style="text-align: center;">暫無資料可供顯示。</td>
+        <td colspan="8" style="text-align: center;">無資料可供顯示。</td>
       </tr>
       }
     </tbody>

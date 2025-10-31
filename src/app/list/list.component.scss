@@ -10,9 +10,8 @@ main {
 
 .searchHeader {
   display: flex;
-  border: 0.1vw solid black;
-  flex-direction: column;
-  align-items: flex-start;
+  // border: 2px solid #ffa334;
+  align-items: center;
   justify-content: center;
   gap: 1vw;
   padding: 1vw;
@@ -27,16 +26,30 @@ main {
   gap: 1vw;
 }
 
+input[type=text] {
+  width: 100%;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  padding: 0.5vh 0.5vw;
+  font-size: medium;
+}
+
+input[type=date] {
+  width: 100%;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  padding: 0.5vh 0.5vw;
+  font-size: medium;
+}
+
 .searchDate {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 1vw;
 }
-
-// table {
-//   width: 100%;
-// }
 
 .listTable {
   margin-top: 3vh;
@@ -46,37 +59,95 @@ main {
 
 .data-table {
   width: 40%;
-  border-collapse: collapse; /* 合併邊框 */
-  font-family: Arial, sans-serif;
+  border-collapse: separate;
+  /* 合併邊框 */
+  border-spacing: 10px;
 }
 
 .data-table th,
 .data-table td {
   border: none;
-  // border: 1px solid #333333;
+  border: 1px solid #d5a972;
   padding: 8px;
-  white-space: nowrap; /* 不換行 */
+  text-align: center;
+  white-space: nowrap;
 
-  &:last-of-type {
-    text-align: left;
-  }
 }
 
 .data-table th {
   background-color: #FDC886;
   color: #333333;
-  font-weight: bold;
+  font-weight: 900;
   position: sticky;
   top: 0;
-  border-bottom: 2px solid #333333;
 }
 
+.data-table th:first-child {
+  border-radius: 15% 0 0 0;
+}
+
+
+.data-table th:last-child {
+  border-radius: 0 15% 0 0;
+}
+
+
 .data-table td {
-  border: 1px solid #333333;
+  border: 1px solid #d5a972;
+  font-weight: 500;
+  padding: 1vh 1vw;
 }
 
 
 /* 斑馬紋效果 (使用 highlight-row class) */
 .data-table tbody tr:nth-child(odd) {
   background-color: #f9f9f9;
+}
+
+
+
+/* -------------------- 和谐统一按钮样式 (Secondary Button) -------------------- */
+button {
+  /* 1. 颜色与背景 */
+  background-color: #D67C2F;
+  /* 基础焦糖橙色 */
+  color: #eeeeee;
+  /* 深灰色文字 */
+  border: none;
+  /* 移除默认边框 */
+
+  /* 2. 大小与形状 */
+  padding: 0.1vh 0.1vw;
+  /* 稍微小一点的内边距，区分于主要按钮 */
+  border-radius: 6px;
+  /* 略微保守的圆角，强调柔和感 */
+  cursor: pointer;
+  /* 明确指示可点击 */
+
+  /* 3. 文字排版 */
+  font-size: medium;
+  /* 略微小一点的字体 */
+  font-weight: 900;
+  /* 标准或略微加粗，保持柔和 */
+  line-height: 1.5;
+
+  /* 4. 过渡效果 */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* -------------------- Hover 悬停效果 (柔和变化) -------------------- */
+button:hover {
+  background-color: #C56B20;
+  /* 颜色略微加深 */
+  /* 柔和阴影：营造被按下或被关注的感觉 */
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* -------------------- Active 按下效果 (真实的按压感) -------------------- */
+button:active {
+  background-color: #A85A1A;
+  /* 颜色进一步加深 */
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2) inset;
+  /* 添加内阴影，模拟按压 */
+  transform: translateY(1px);
 }

@@ -1,4 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+
+// Customize the entire app. Change :root to your selector if you want to scope the styles.
+:root {
+  @include mat.datepicker-overrides((calendar-container-background-color:#F5F2EA, ));
+}
+
+:root,
+host {
+  --mat-sys-primary: #d5a972;
+  --mat-sys-surface-variant: none;
+}
+
 
 html,
 body {

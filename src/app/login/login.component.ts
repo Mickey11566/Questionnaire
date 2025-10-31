@@ -1,3 +1,4 @@
+import { LoadingService } from './../@services/loading.service';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -9,8 +10,19 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
 
-  constructor(private router: Router) { }
+  showLoading!: boolean;
+
+  constructor(private router: Router, private loadingService: LoadingService) { }
   login() {
-    this.router.navigateByUrl('list')
+    this.loadingService.show();
+    setTimeout(() => {
+      this.router.navigateByUrl('list')
+    }, 3000);
+  }
+
+  ngOnInit(): void {
+    this.loadingService._secondLoading$.subscribe((res) => {
+      this.showLoading = res;
+    })
   }
 }
