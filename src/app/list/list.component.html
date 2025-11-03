@@ -3,9 +3,7 @@
     <div class="searchContent">
       <mat-form-field appearance="outline" class="search-form-field">
         <mat-icon matPrefix>search</mat-icon>
-
         <input matInput type="text" placeholder="搜尋問卷名稱" (keyup)="searchForm()" [(ngModel)]="searchData">
-
       </mat-form-field>
     </div>
     <div class="searchDate">
@@ -40,7 +38,7 @@
       </tr>
     </thead>
     <tbody>
-      @for (item of userData; track item.no; let i = $index) {
+      @for (item of filteredData; track item.no; let i = $index) {
       <tr [class.highlight-row]="i % 2 === 0">
         <td>{{ item.no }}</td>
         <td>{{ item.name }}</td>

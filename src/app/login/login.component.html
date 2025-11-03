@@ -1,23 +1,9 @@
-<div style="
-  width: 100%;
-  height: 100%;
-  background-color: #F5F2EA;
-  display: flex;
-  justify-content: center;
-  align-items: center;">
+<div class="loginContainer">
 
-  <div style="
-  width: 30%;
-  height: 60%;
-  border-radius: 25px;
-  background-color: #ffffff;">
-    <div style="
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.1vw;">
+  <div class="userInfo" [class.is-flipping-out]="isFlipping">
+    <div style=" display: flex; flex-direction: column; align-items: center; gap: 0.1vw;">
       <h1>User Login</h1>
-      <p style="font-size: medium; font-weight: 500;">Hi, Enter your details to get sign in to your account</p>
+      <p style="font-size: medium; font-weight: 500;">Hi, Welcome back!</p>
     </div>
     <div style="
     display: flex;
@@ -25,31 +11,44 @@
     flex-direction: column;
     align-items: center;
     gap:1vw;
-    margin: 5vh 0">
-      <input type="email" required placeholder="Enter Email" style="width: 70%;
-      padding: 2vh 0.5vw;
-      font-size: larger;
-      border-radius: 5px;">
-      <input type="password" required placeholder="Password" style="width: 70%;
-      padding: 2vh 0.5vw;
-      font-size: larger;
-      border-radius: 5px;">
+    margin: 2vh 0">
+      <mat-form-field style="width: 75%;" appearance="outline" class="email-form-field">
+        <mat-icon matSuffix>mail</mat-icon>
+        <input required matInput type="text" placeholder="Email" [(ngModel)]="userEmail">
+      </mat-form-field>
 
-      <button (click)="login()" style="width: 75%;
-      padding: 1.5vh 0.5vw;
-      font-size: medium;
-      font-weight:600;
-      border-radius: 5px;
-      border: none;
-      background-color: #FDC886;
-      margin-top: 5vh;
-      ">Login</button>
+
+      <mat-form-field style="width: 75%;" appearance="outline" class="password-form-field">
+        <input required placeholder="Password" [(ngModel)]="userPassword" matInput
+          [type]="pwdHide ? 'password' : 'text'">
+        <button style="border: none; background: none; margin-right: 0.3vw;" mat-icon-button matSuffix
+          (click)="pwdHide = !pwdHide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="pwdHide">
+          <mat-icon>{{pwdHide ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <button (click)="login()" class="loginBtn">Login</button>
     </div>
     <div style="display: flex; justify-content: center;">
-      Don't have an account?<a href="/register">Register Now</a>
+      Don't have an account?<button class="regBtn" (click)="goRegister()">Register
+        Now</button>
     </div>
   </div>
 </div>
+
+
+<div class="bgDecoration">
+</div>
+
+<div class="bgDecoration2">
+</div>
+
+<div class="bgDecoration3">
+</div>
+
+<div class="bgDecoration4">
+</div>
+
 
 @if(showLoading){
 <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 5;">

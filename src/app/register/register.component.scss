@@ -1,0 +1,96 @@
+/* 1. 定義一個 "翻轉進來" 的 @keyframes 動畫 */
+@keyframes flipIn {
+  from {
+    /* 從 "翻轉離開" 的結束狀態開始 */
+    transform: rotateY(180deg) scale(0.7);
+    opacity: 0;
+  }
+
+  to {
+    /* 結束於正常狀態 */
+    transform: rotateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.mainContainer {
+  background-image: url("../images/music.png");
+  background-size: 30%;
+  background-repeat: no-repeat;
+  position: absolute;
+
+  width: 100%;
+  height: 100%;
+  background-color: #F5F2EA;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bgDecoration {
+  // border: 1px solid black;
+  width: 20vw;
+  height: 30vw;
+
+  background-image: url("../images/music.png");
+  background-size: 100%;
+  background-repeat: no-repeat;
+  position: absolute;
+  right: 3vw;
+  bottom: 5vh;
+}
+
+.register-container {
+  width: 30%;
+  height: 60%;
+  border-radius: 25px;
+  background-color: #ffffff;
+
+  transition: transform 0.6s ease-in-out, opacity 0.5s ease-in;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+
+  animation: flipIn 0.6s ease-out;
+  /* 確保載入時有動畫 */
+
+}
+
+.register-container.is-flipping-out {
+  /* 沿著 Y 軸翻轉 180 度 (與登入頁面離開的方向相反) */
+  transform: rotateY(180deg) scale(0.7);
+
+  /* 同時淡出 */
+  opacity: 0;
+}
+
+.loginBtn {
+  border: none;
+  background: none;
+  font-weight: 700;
+  text-decoration: underline;
+  font-size: medium;
+}
+
+.loginBtn:hover {
+  color: dodgerblue;
+}
+
+
+.regBtn {
+  width: 75%;
+  padding: 1.5vh 0.5vw;
+  font-size: medium;
+  font-weight: 600;
+  border-radius: 5px;
+  border: none;
+  background-color: #FDC886;
+
+}
+
+
+.regBtn:hover {
+  background-color: #ec8735;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  transform: scale(1.05);
+
+}

@@ -28,8 +28,8 @@ export class ListComponent {
   startDate!: string;
   endDate!: string;
   result!: string;
-  userStartDate!: string;
-  userEndDate!: string;
+  userStartDate!: Date;
+  userEndDate!: Date;
 
   userData = [
     { no: 1, name: '第八十七屆公司最佳新人獎', description: "現在，解決&#21839;&#21367;的問題，是非常非常重要的。 所以，經過上述討論，那麽，所以說，所謂&#21839;&#21367;，關鍵是&#21839;&#21367;需要如何寫。俾斯麥有說過，對於不屈不撓的人來說，沒有失敗這回事。這啟發了我，更多&#21839;&#21367;的意義是這樣的，&#21839;&#21367;因何而發生？", status: "尚未開始", startDate: "2025-12-21", endDate: "2025-12-31", result: "前往" },
@@ -71,19 +71,55 @@ export class ListComponent {
     this.route.params.subscribe(params => {
       console.log(params['id']);
     })
+
+    // 確保在元件初始化時，filteredData 被正確設定
+    this.filteredData = [...this.userData];
   }
 
   // 搜尋欄位
-  searchData!: string;
+  searchData: string = '';
 
   arrayData!: any;
+  // 儲存篩選後的資料，初始值為原始資料
+  filteredData: any[] = this.userData;
 
+  // 搜尋與篩選邏輯
   searchForm() {
-    for (let data of this.userData) {
-      if (data.name.indexOf(this.searchData) != -1) {
-        this.arrayData.push(data);
-      }
+    let tempArray = this.userData;
+
+    // 根據「問卷名稱」進行篩選 (如果 searchData 有值)
+    if (this.searchData) {
+      const searchTerm = this.searchData.toLowerCase().trim();
+      tempArray = tempArray.filter(data =>
+        data.name.toLowerCase().includes(searchTerm)
+      );
     }
+
+    // 根據「日期區間」進行篩選 (如果 userStartDate 或 userEndDate 有值)
+    if (this.userStartDate || this.userEndDate) {
+      tempArray = tempArray.filter(data => {
+        // 將資料中的日期字串轉換為 Date 物件，以便比較
+        const itemStartDate = new Date(data.startDate);
+        const itemEndDate = new Date(data.endDate);
+
+        // 將使用者選擇的日期進行調整，以便進行區間判斷
+        // 開始日期：應當包含當日（所以時間用 00:00:00）
+        const searchStart = this.userStartDate ? new Date(this.userStartDate.setHours(0, 0, 0, 0)) : null;
+        // 結束日期：應當包含當日（所以時間用 23:59:59）
+        const searchEnd = this.userEndDate ? new Date(this.userEndDate.setHours(23, 59, 59, 999)) : null;
+
+
+        // 判斷問卷的區間是否與搜尋區間有交集
+        const hasStartOverlap = !searchStart || itemEndDate >= searchStart;
+        const hasEndOverlap = !searchEnd || itemStartDate <= searchEnd;
+
+        // 如果兩個條件都滿足，則表示有交集，保留此資料
+        return hasStartOverlap && hasEndOverlap;
+      });
+    }
+
+    // 更新表格顯示的資料
+    this.filteredData = tempArray;
   }
 }
 
