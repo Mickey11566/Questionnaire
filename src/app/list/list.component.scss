@@ -105,50 +105,26 @@ input[type=date] {
   background-color: #f9f9f9;
 }
 
-
-
-/* -------------------- 和谐统一按钮样式 (Secondary Button) -------------------- */
 button {
-  /* 1. 颜色与背景 */
-  background-color: #D67C2F;
-  /* 基础焦糖橙色 */
-  color: #eeeeee;
-  /* 深灰色文字 */
+  // background-color: #D67C2F;
+  color: #D67C2F;
   border: none;
-  /* 移除默认边框 */
-
-  /* 2. 大小与形状 */
   padding: 0.1vh 0.1vw;
-  /* 稍微小一点的内边距，区分于主要按钮 */
   border-radius: 6px;
-  /* 略微保守的圆角，强调柔和感 */
   cursor: pointer;
-  /* 明确指示可点击 */
-
-  /* 3. 文字排版 */
   font-size: medium;
-  /* 略微小一点的字体 */
   font-weight: 900;
-  /* 标准或略微加粗，保持柔和 */
   line-height: 1.5;
-
-  /* 4. 过渡效果 */
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* -------------------- Hover 悬停效果 (柔和变化) -------------------- */
 button:hover {
-  background-color: #C56B20;
-  /* 颜色略微加深 */
-  /* 柔和阴影：营造被按下或被关注的感觉 */
+  background-color: #eeeeee;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 }
 
-/* -------------------- Active 按下效果 (真实的按压感) -------------------- */
 button:active {
   background-color: #A85A1A;
-  /* 颜色进一步加深 */
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2) inset;
-  /* 添加内阴影，模拟按压 */
   transform: translateY(1px);
 }

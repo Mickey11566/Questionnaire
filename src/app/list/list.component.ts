@@ -11,8 +11,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 
-
-
 @Component({
   selector: 'app-list',
   imports: [FormsModule, MatDatepickerModule, MatIconModule, MatFormFieldModule, MatInputModule],

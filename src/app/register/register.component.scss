@@ -14,8 +14,8 @@
 }
 
 .mainContainer {
-  background-image: url("../images/music.png");
-  background-size: 30%;
+  background-image: url("../images/bg.png");
+  background-size: 100%;
   background-repeat: no-repeat;
   position: absolute;
 
@@ -27,18 +27,6 @@
   align-items: center;
 }
 
-.bgDecoration {
-  // border: 1px solid black;
-  width: 20vw;
-  height: 30vw;
-
-  background-image: url("../images/music.png");
-  background-size: 100%;
-  background-repeat: no-repeat;
-  position: absolute;
-  right: 3vw;
-  bottom: 5vh;
-}
 
 .register-container {
   width: 30%;
