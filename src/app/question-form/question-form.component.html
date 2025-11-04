@@ -1,12 +1,12 @@
 <div class="formHeader">
   <div class="formDate">
-    <h3>可填寫時間： 待填 至 待填</h3>
+    <h3>可填寫時間： {{currentFormData?.startDate}} 至 {{currentFormData?.endDate}}</h3>
   </div>
   <div class="formTitle">
-    <h1>{{name}}</h1>
+    <h1>{{currentFormData?.name}}</h1>
   </div>
   <div class="formDescription">
-    {{description}}
+    {{currentFormData?.description}}
   </div>
 </div>
 
@@ -56,7 +56,7 @@
 
 
   <div class="formButton">
-    <button routerLink="/list">返回</button>
-    <button (click)="submitData()" routerLink="/review">預覽</button>
+    <button class="cancleBtn" routerLink="/list">返回</button>
+    <button class="reviewBtn" (click)="previewForm()" routerLink="/review">預覽</button>
   </div>
 </div>

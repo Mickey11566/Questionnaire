@@ -109,6 +109,7 @@ button {
   // background-color: #D67C2F;
   color: #D67C2F;
   border: none;
+  background: none;
   padding: 0.1vh 0.1vw;
   border-radius: 6px;
   cursor: pointer;
@@ -119,12 +120,10 @@ button {
 }
 
 button:hover {
-  background-color: #eeeeee;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  transform: scale(1.05);
 }
 
 button:active {
-  background-color: #A85A1A;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2) inset;
   transform: translateY(1px);
 }

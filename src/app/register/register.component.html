@@ -7,7 +7,7 @@
       align-items: center;
       gap: 0.1vw;">
       <h1 style="color: #C56B20;">R e g i s t r a t i o n</h1>
-      <button class="loginBtn" (click)="goLogin()">Back to Login</button>
+
     </div>
     <div style="
     display: flex;
@@ -15,7 +15,8 @@
     flex-direction: column;
     align-items: center;
     gap:0.5vw;
-    margin: 2vh 0">
+    margin: 1vh 0">
+
       <mat-form-field style="width: 75%;" appearance="outline" class="email-form-field">
         <mat-icon matSuffix>mail</mat-icon>
         <input required matInput type="text" placeholder="Email" [(ngModel)]="userEmail">
@@ -43,9 +44,8 @@
 
 
       <button class="regBtn" (click)="finish()">Register</button>
+      <button class="loginBtn" (click)="goLogin()">Back to Login</button>
+
     </div>
   </div>
 </div>
-
-
-<div class="bgDecoration">

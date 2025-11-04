@@ -25,7 +25,7 @@
     </div>
   </div>
 
-  <table class="data-table">
+  <table class="data-table" id="myTable">
     <thead>
       <tr>
         <th>編號</th>
@@ -38,9 +38,9 @@
       </tr>
     </thead>
     <tbody>
-      @for (item of filteredData; track item.no; let i = $index) {
+      @for (item of filteredData; track item.id; let i = $index) {
       <tr [class.highlight-row]="i % 2 === 0">
-        <td>{{ item.no }}</td>
+        <td>{{ item.id }}</td>
         <td>{{ item.name }}</td>
         @if(item.status =="進行中") {
         <td
@@ -61,7 +61,7 @@
         </td>
         }
         @if(item.status == "進行中"){
-        <td><button>填寫</button></td>
+        <td><button (click)="filloutForm(item.id)">填寫</button></td>
         } @else {
         <td></td>
         }
@@ -75,4 +75,29 @@
       }
     </tbody>
   </table>
+
+  <div class="pagination-controls" style="margin-top: 20px; text-align: center;">
+
+    <span style="margin-right: 15px;">
+      第 {{ currentPage }} 頁 / 共 {{ totalPages }} 頁
+    </span>
+
+    <button (click)="previousPage()" [disabled]="currentPage === 1" style="padding: 5px 10px; margin-right: 5px;">
+      上一頁
+    </button>
+
+    @for (page of getPagesArray(); track page) {
+    <button (click)="goToPage(page)" [class.active-page]="currentPage === page"
+      style="padding: 5px 10px; margin: 0 2px; border: 1px solid #ccc; cursor: pointer;"
+      [style.background-color]="currentPage === page ? '#FFA640' : 'white'"
+      [style.color]="currentPage === page ? 'white' : 'black'">
+      {{ page }}
+    </button>
+    }
+
+    <button (click)="nextPage()" [disabled]="currentPage === totalPages" style="padding: 5px 10px; margin-left: 5px;">
+      下一頁
+    </button>
+
+  </div>
 </main>

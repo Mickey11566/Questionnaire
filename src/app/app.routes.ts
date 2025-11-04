@@ -12,7 +12,7 @@ export const routes: Routes = [
   },
 
   {
-    path: "form", component: QuestionFormComponent,
+    path: "form/:id", component: QuestionFormComponent,
   },
 
   {

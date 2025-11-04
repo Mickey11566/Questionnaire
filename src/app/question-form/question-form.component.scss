@@ -63,3 +63,48 @@
   justify-content: flex-end;
   margin: 2vh 3vw;
 }
+
+.reviewBtn {
+  background-color: #D67C2F;
+  color: white;
+  border: none;
+  padding: 0.5vh 0.5vw;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: large;
+  font-weight: 600;
+  line-height: 1.5;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.reviewBtn:hover {
+  background-color: #d48e51;
+  transform: scale(1.1);
+}
+
+.reviewBtn:active {
+  transform: scale(0.95);
+}
+
+
+.cancleBtn {
+  background-color: #4a4847;
+  color: white;
+  border: none;
+  padding: 0.5vh 0.5vw;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: large;
+  font-weight: 600;
+  line-height: 1.5;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cancleBtn:hover {
+  background-color: #2d241d;
+  transform: scale(1.1);
+}
+
+.cancleBtn:active {
+  transform: scale(0.95);
+}

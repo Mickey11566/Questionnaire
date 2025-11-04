@@ -29,7 +29,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-    background-image: url("../images/bg.png");
+  background-image: url("../images/bg.png");
   background-size: 100%;
   background-repeat: no-repeat;
 }
@@ -39,7 +39,7 @@
   width: 30%;
   height: 60%;
   border-radius: 25px;
-  background-color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.6);
   transform-style: preserve-3d;
   transition: transform 0.6s ease-in-out, opacity 0.5s ease-in;
   perspective: 1000px;
