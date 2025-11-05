@@ -1,0 +1,55 @@
+<div class="mainContainer">
+
+  <div class="register-container">
+
+    <div style="
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.1vw;">
+      <mat-icon style="color: #C56B20;  height: 40px;  width: 40px;  font-size: 40px;  line-height: 40px;"
+        aria-hidden="false" aria-label="Member icon" fontIcon="person"></mat-icon>
+      <h1 style="color: #C56B20;">Member Profile</h1>
+
+    </div>
+
+    <div style="
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap:0.5vw;
+    margin: 1vh 0">
+
+      <mat-form-field style="width: 75%;" appearance="outline" class="email-form-field">
+        <mat-icon matSuffix>mail</mat-icon>
+        <input disabled matInput type="text" placeholder="Email（不可修改）" [(ngModel)]="userEmail">
+      </mat-form-field>
+
+
+      <mat-form-field style="width: 75%;" appearance="outline" class="password-form-field">
+        <input required placeholder="New Password" [(ngModel)]="userPassword" matInput
+          [type]="pwdHide ? 'password' : 'text'">
+        <button style="border: none; background: none; margin-right: 0.3vw;" mat-icon-button matSuffix
+          (click)="pwdHide = !pwdHide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="pwdHide">
+          <mat-icon>{{pwdHide ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <mat-form-field style="width: 75%;" appearance="outline" class="name-form-field">
+        <mat-icon matSuffix>person</mat-icon>
+        <input required matInput type="text" placeholder="Name" [(ngModel)]="userName">
+      </mat-form-field>
+
+      <mat-form-field style="width: 75%;" appearance="outline" class="phone-form-field">
+        <mat-icon matSuffix>phone_enabled</mat-icon>
+        <input required matInput type="text" placeholder="Phone" [(ngModel)]="userPhone">
+      </mat-form-field>
+
+      <div style="display: flex; gap: 1vw;">
+        <button class="submitBtn" (click)="Submit()">修改</button>
+        <button class="cancleBtn" (click)="goBack()">返回</button>
+      </div>
+    </div>
+  </div>
+</div>

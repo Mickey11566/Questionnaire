@@ -38,7 +38,7 @@
       </tr>
     </thead>
     <tbody>
-      @for (item of filteredData; track item.id; let i = $index) {
+      @for (item of pagedData; track item.id; let i = $index) {
       <tr [class.highlight-row]="i % 2 === 0">
         <td>{{ item.id }}</td>
         <td>{{ item.name }}</td>
@@ -101,3 +101,27 @@
 
   </div>
 </main>
+
+<nav class="navBar">
+
+  <!-- <button>
+  </button>
+  <button>
+    <mat-icon aria-hidden="false" aria-label="logout icon" fontIcon="logout"></mat-icon>
+  </button> -->
+  <ul>
+    <li style="--i:#FF9966;--j:#FF5E62">
+      <span class="icon"> <mat-icon aria-hidden="false" aria-label="history icon" fontIcon="history"></mat-icon></span>
+      <span class="title">填寫紀錄</span>
+    </li>
+    <li (click)="profile()" style="--i:#FF9966;--j:#FF5E62">
+      <span class="icon"> <mat-icon aria-hidden="false" aria-label="person_edit icon"
+          fontIcon="person_edit"></mat-icon></span>
+      <span class="title">個人資料</span>
+    </li>
+    <li (click)="logout()" style="--i:#FF9966;--j:#FF5E62">
+      <span class="icon"> <mat-icon aria-hidden="false" aria-label="logout icon" fontIcon="logout"></mat-icon></span>
+      <span class="title">登出</span>
+    </li>
+  </ul>
+</nav>

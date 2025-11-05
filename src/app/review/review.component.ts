@@ -15,39 +15,56 @@ export class ReviewComponent {
   userAge!: number;
   userContent!: string;
 
-  reviewData: | null = null;
-
-
-  // 對於表單預覽，我們通常不將整個表單數據放在 URL 裡 (因為資料可能過大或包含敏感資訊)。
-  // 使用 Service 暫存資料 (State Management)
-  // 在 QuestionnaireService 或一個專門的 ReviewService 中新增屬性來暫存使用者在表單中填寫的即時資料。
+  reviewData: any;
 
   // 導航到 Review 路由
   // 新增一個專門的 Review 頁面路由，並從服務中取出暫存的資料。
   constructor(private questionnaireService: QuestionnaireService, private router: Router) { }
 
   ngOnInit(): void {
+    this.reviewData = this.questionnaireService.getDraftData();
 
     this.userName = this.questionnaireService.inputName;
-    this.userEmail = this.questionnaireService.inputEmail;
-    this.userPhone = this.questionnaireService.inputPhone;
     this.userAge = this.questionnaireService.inputAge;
     this.userContent = this.questionnaireService.inputContent;
+
+
+    if (!this.reviewData) {
+      // 如果沒有資料，可以選擇跳轉回表單頁面
+      this.router.navigate(['/form']);
+
+
+    }
   }
 
   comfirm() {
-    console.log("123");
+    if (this.reviewData) {
+      // 建立一個僅包含答案的 JSON 物件
+      let answersOnly = {
+        inputName: this.reviewData.inputName,
+        inputAge: this.reviewData.inputAge,
+        fruitOption: this.reviewData.fruitOption,
+        inputContent: this.reviewData.inputContent
+      };
 
-    this.router.navigate(['list']);
+      // **console.log 出使用者選擇的答案 JSON 格式**
+      const finalJsonData = JSON.stringify(answersOnly, null, 2);
+
+      console.log(finalJsonData);
+
+      this.questionnaireService.clearDraftData();
+      // 導航到成功頁面
+      this.router.navigate(['/list']);
+    }
+
   }
 
   back() {
-    // 返回到之前的表單填寫頁面
-    // 我們需要知道原本的 ID 才能正確返回
-    // if (this.reviewData && this.reviewData.questionnaireId) {
-    //   this.router.navigate(['/form', this.reviewData.questionnaireId]);
-    // } else {
-    //   this.router.navigate(['/']); // 如果沒有 ID，導航到首頁
-    // }
+    // 返回表單填寫頁面 (需要 ID)
+    if (this.reviewData && this.reviewData.questionnaireId) {
+      this.router.navigate(['/form', this.reviewData.questionnaireId]);
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 }

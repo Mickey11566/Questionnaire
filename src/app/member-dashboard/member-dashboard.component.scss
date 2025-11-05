@@ -1,0 +1,70 @@
+.mainContainer {
+  width: 100%;
+  height: 100%;
+  background-color: #F5F2EA;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.register-container {
+  width: 30%;
+  height: 60%;
+  border-radius: 25px;
+  background-color: rgba(255, 255, 255, 0.6);
+
+  transition: transform 0.6s ease-in-out, opacity 0.5s ease-in;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+
+  animation: flipIn 0.6s ease-out;
+  /* 確保載入時有動畫 */
+
+}
+
+
+
+.submitBtn {
+  background-color: #D67C2F;
+  color: white;
+  border: none;
+  padding: 0.5vh 0.5vw;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: large;
+  font-weight: 600;
+  line-height: 1.5;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.submitBtn:hover {
+  background-color: #d48e51;
+  transform: scale(1.1);
+}
+
+.submitBtn:active {
+  transform: scale(0.95);
+}
+
+
+.cancleBtn {
+  background-color: #4a4847;
+  color: white;
+  border: none;
+  padding: 0.5vh 0.5vw;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: large;
+  font-weight: 600;
+  line-height: 1.5;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cancleBtn:hover {
+  background-color: #2d241d;
+  transform: scale(1.1);
+}
+
+.cancleBtn:active {
+  transform: scale(0.95);
+}

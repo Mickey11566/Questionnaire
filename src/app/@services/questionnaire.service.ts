@@ -1,5 +1,6 @@
 import { ListItem } from './../@interfaces/list-item';
 import { Injectable } from '@angular/core';
+import { ReviewDraft } from './../@interfaces/list-item';
 
 
 @Injectable({
@@ -22,23 +23,7 @@ export class QuestionnaireService {
   inputAge!: number; //填寫的年紀
   inputContent!: string; //填寫的原因
 
-  // 用於儲存表單內容
-  private currentFormDraft: null = null;
-
-  // 設定表單草稿的方法 (由 QuestionFormComponent 呼叫)
-  setDraftData(data: any): void {
-    this.currentFormDraft = data;
-  }
-
-  // 取得表單草稿 (由 ReviewComponent 呼叫)
-  getDraftData(): any | null {
-    return this.currentFormDraft;
-  }
-
-  // 清除草稿 (在送出或離開時使用)
-  clearDraftData(): void {
-    this.currentFormDraft = null;
-  }
+  private currentFormDraft: ReviewDraft | null = null;
 
   constructor() { }
 
@@ -65,8 +50,25 @@ export class QuestionnaireService {
     { id: 24, name: 'Calcium', description: "", status: "已結束", startDate: "2025-10-07", endDate: "2025-10-07", result: "前往" },
   ];
 
+  // 設定預覽草稿
+  setDraftData(data: ReviewDraft): void {
+    this.currentFormDraft = data;
+  }
+
+  // 取得預覽草稿
+  getDraftData(): ReviewDraft | null {
+    return this.currentFormDraft;
+  }
+
+  // 清空預覽草稿
+  clearDraftData(): void {
+    this.currentFormDraft = null;
+  }
+
   // 新增一個方法，用來根據 id 取得單一資料
   getQuestionnaireById(id: number): ListItem | undefined {
     return this.listData.find(item => item.id === id);
   }
 }
+
+

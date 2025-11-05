@@ -42,15 +42,18 @@ export class ListComponent {
   arrayData!: any;
   // 儲存篩選後的資料，初始值為空資料
   // 接著在ngOnInit的地方去篩入資料
-  filteredData: any[] = [];
+  allfilteredData: any[] = [];
+
+  // 儲存當前頁面要顯示的資料 (用於表格顯示)
+  pagedData: any[] = [];
 
   ngOnInit(): void {
 
     // 確保在元件初始化時，filteredData 被正確設定
-    this.filteredData = [...this.questionList.listData];
+    this.allfilteredData = [...this.questionList.listData];
 
     // 分頁功能
-    this.totalItems = this.questionList.listData.length;
+    this.totalItems = this.allfilteredData.length;
     this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
     this.updatePagedData(); // 初始載入第一頁數據
   }
@@ -61,7 +64,7 @@ export class ListComponent {
     const endIndex = startIndex + this.itemsPerPage;
 
     // 使用 slice 取得當前頁面的數據
-    this.filteredData = this.questionList.listData.slice(startIndex, endIndex);
+    this.pagedData = this.allfilteredData.slice(startIndex, endIndex);
   }
 
   // 切換頁面
@@ -128,7 +131,26 @@ export class ListComponent {
       });
     }
 
-    // 更新表格顯示的資料
-    this.filteredData = tempArray;
+    // 1. 更新所有篩選後的資料
+    this.allfilteredData = tempArray;
+
+    // 2. 重設當前頁碼為 1
+    this.currentPage = 1;
+
+    // 3. 重新計算總筆數和總頁數
+    this.totalItems = this.allfilteredData.length;
+    this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+
+    // 4. 更新當前頁面顯示的數據
+    this.updatePagedData();
+  }
+
+  profile() {
+    this.router.navigateByUrl('profile');
+
+  }
+
+  logout() {
+    this.router.navigateByUrl('login');
   }
 }

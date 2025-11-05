@@ -1,61 +1,42 @@
-<div class="formHeader">
-  <div class="formDate">
-    <h3>2025-10-28 ~ 2025-10-31</h3>
-  </div>
-  <!-- <div class="formTitle">
-    <h1>{{name}}</h1>
-  </div>
-  <div class="formDescription">
-    {{description}}
-  </div> -->
-</div>
-
-<div class="formContent">
-  <div class="formUser">
-    <span>姓名：{{userName}}</span>
-    <span>手機：{{userPhone}}</span>
-    <span>Email：{{userEmail}}</span>
-    <span>年齡：{{userAge}}</span>
+<div>
+  <div class="formHeader">
+    <div class="formDate">
+      <h3>
+        可填寫時間： {{reviewData.questionnaireStartDate}} 至 {{reviewData.questionnaireEndDate}}
+      </h3>
+    </div>
+    <div class="formTitle">
+      <h1>{{reviewData.questionnaireName}}</h1>
+    </div>
+    <div class="formDescription">
+      {{reviewData.questionnaireDescription}}
+    </div>
   </div>
 
-  <div class="formOptionA">
-    <fieldset style="display: flex; flex-direction: column; gap: 1vw;">
-      <legend>選擇一個最喜歡吃的水果（必填）：</legend>
+  <div class="formContent">
 
-      <div>
-        <input type="radio" name="fruit" value="apple" checked />
-        <label for="apple">蘋果</label>
-      </div>
+    <div class="formUser">
+      <p>姓名： <strong>{{reviewData.inputName || '未填寫'}}</strong></p>
+      <p>年齡： <strong>{{reviewData.inputAge || '未填寫'}}</strong></p>
+    </div>
 
-      <div>
-        <input type="radio" name="fruit" value="banana" />
-        <label for="banana">香蕉</label>
-      </div>
+    <hr>
 
-      <div>
-        <input type="radio" name="fruit" value="grape" />
-        <label for="grape">葡萄</label>
-      </div>
-    </fieldset>
-  </div>
+    <div class="formOptionA">
+      <p>選擇一個最喜歡吃的水果：</p>
+      <p><strong>{{ (reviewData.fruitOption) || '未選擇' }}</strong></p>
+    </div>
 
-  <div class="formOptionB">
-    <fieldset>
-      <legend>請說明理由：</legend>
-      <textarea disabled style="
-         padding: 10px;
-        max-width: 100%;
-        line-height: 1.5;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-        box-shadow: 1px 1px 1px #999;" name="reason" row="5" cols="30" placeholder="100字以內"
-        maxlength="100">{{userContent}}</textarea>
-    </fieldset>
-  </div>
+    <div class="formOptionB">
+      <p>理由：</p>
+      <p style="white-space: pre-wrap;"><strong>{{ reviewData.inputContent || '未填寫理由' }}</strong></p>
+    </div>
 
+    <hr>
 
-  <div class="formButton">
-    <button class="cancleBtn" (click)="back()">返回</button>
-    <button class="submitBtn" (click)="comfirm()" routerLink="/review">送出</button>
+    <div class="formButton">
+      <button class="cancleBtn" (click)="back()">返回修改</button>
+      <button class="submitBtn" (click)="comfirm()">確認送出</button>
+    </div>
   </div>
 </div>

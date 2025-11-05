@@ -5,6 +5,7 @@ import { ReviewComponent } from './review/review.component';
 import { ResultComponent } from './result/result.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import { MemberDashboardComponent } from './member-dashboard/member-dashboard.component';
 
 export const routes: Routes = [
   {
@@ -13,6 +14,10 @@ export const routes: Routes = [
 
   {
     path: "form/:id", component: QuestionFormComponent,
+  },
+
+  {
+    path: "profile", component: MemberDashboardComponent,
   },
 
   {
