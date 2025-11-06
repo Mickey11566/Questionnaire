@@ -229,3 +229,37 @@ ul li:hover .title {
   transform: scale(1);
   transition-delay: 0.25s;
 }
+
+/* 偶數行高亮樣式 (從您的 [class.highlight-row] 來的) */
+.highlight-row {
+  background-color: #f7f7f7;
+  /* 輕微的灰色背景 */
+}
+
+/* 狀態欄位基本樣式 */
+.status-cell {
+  text-align: center;
+  font-size: medium;
+  font-weight: 500;
+  padding: 8px;
+}
+
+/* 進行中 (您原本的樣式) */
+.status-inprogress {
+  color: #ffa640;
+  /* 亮橙色 */
+  text-shadow: 1px 1px #000000;
+}
+
+/* 已結束 */
+.status-finished {
+  color: #e52f2f;
+  /* 深灰色 */
+  font-weight: 400;
+}
+
+
+/* 行動按鈕欄位樣式 */
+.action-cell {
+  text-align: center;
+}

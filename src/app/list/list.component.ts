@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 
+
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QuestionnaireService } from '../@services/questionnaire.service';
@@ -10,10 +11,16 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { CommonModule } from '@angular/common';
+
+
+// sweetalert
+import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-list',
-  imports: [FormsModule, MatDatepickerModule, MatIconModule, MatFormFieldModule, MatInputModule],
+  imports: [FormsModule, MatDatepickerModule, MatIconModule, MatFormFieldModule, MatInputModule, CommonModule],
   providers: [provideNativeDateAdapter()],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss'
@@ -56,15 +63,24 @@ export class ListComponent {
     this.totalItems = this.allfilteredData.length;
     this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
     this.updatePagedData(); // 初始載入第一頁數據
+
   }
 
-  // 核心邏輯：計算要顯示的數據子集
+  // 計算要顯示的dataset
   updatePagedData() {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
-
-    // 使用 slice 取得當前頁面的數據
-    this.pagedData = this.allfilteredData.slice(startIndex, endIndex);
+    let temp = this.allfilteredData.sort((a, b) => {
+      if (a.id > b.id) {
+        return -1;
+      }
+      if (a.id < b.id) {
+        return 1;
+      }
+      return 0;
+    })
+    // 用 slice 取得當前頁面的數據
+    this.pagedData = temp.slice(startIndex, endIndex);
   }
 
   // 切換頁面
@@ -85,7 +101,7 @@ export class ListComponent {
     this.goToPage(this.currentPage + 1);
   }
 
-  // 獲取頁碼陣列，用於在 HTML 中生成頁碼按鈕 (例如: [1, 2, 3, 4])
+  // 獲取頁碼用於在 HTML 中生成頁碼按鈕 (例如: [1, 2, 3, 4])
   getPagesArray(): number[] {
     return Array(this.totalPages).fill(0).map((x, i) => i + 1);
   }

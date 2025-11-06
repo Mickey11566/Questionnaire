@@ -27,28 +27,186 @@ export class QuestionnaireService {
 
   constructor() { }
 
+  ngOnInit(): void {
+    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
+    //Add 'implements OnInit' to the class.
+    this.updateItemStatuses();
+  }
+
+  getTodayDateOnly(): Date {
+    const today = new Date();
+    // 建立一個新的 Date 物件，只包含年、月、日，並將時間設定為 UTC 午夜
+    // 這樣可以避免時區問題，確保 '2025-11-06' 在任何時區都被視為同一天。
+    return new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()));
+  }
+
+  /**
+   * 根據今天的日期，更新 listData 中所有項目的狀態。
+   */
+  updateItemStatuses(): void {
+    const today = this.getTodayDateOnly();
+
+    this.listData.forEach(item => {
+      const startDate = new Date(item.startDate);
+      const endDate = new Date(item.endDate);
+
+      // --- 判斷邏輯 ---
+
+      // 1. 已結束 (今天 > 結束日期)
+      if (today.getTime() > endDate.getTime()) {
+        item.status = "已結束";
+      }
+      // 2. 進行中 (今天 >= 開始日期 且 今天 <= 結束日期)
+      else if (today.getTime() >= startDate.getTime() && today.getTime() <= endDate.getTime()) {
+        item.status = "進行中";
+      }
+      // 3. 尚未開始 (今天 < 開始日期)
+      else if (today.getTime() < startDate.getTime()) {
+        item.status = "尚未開始";
+      }
+    });
+
+    console.log('更新後的 listData:', this.listData);
+  }
+
   listData: ListItem[] = [
-    { id: 3, name: '第八十七屆公司最佳新人獎', description: "現在，解決&#21839;&#21367;的問題，是非常非常重要的。 所以，經過上述討論，那麽，所以說，所謂&#21839;&#21367;，關鍵是&#21839;&#21367;需要如何寫。俾斯麥有說過，對於不屈不撓的人來說，沒有失敗這回事。這啟發了我，更多&#21839;&#21367;的意義是這樣的，&#21839;&#21367;因何而發生？", status: "尚未開始", startDate: "2025-12-21", endDate: "2025-12-31", result: "前往" },
-    { id: 5, name: 'Helium', description: "所謂&#21839;&#21367;，關鍵是&#21839;&#21367;需要如何寫。&#21839;&#21367;真的是很值得探究，我們都知道，只要有意義，那麽就必須慎重考慮。一般來說，塞涅卡講過一句話，真正的人生，只有在經過艱難卓絕的鬥爭之後才能實現。這果然是一句至理名言。", status: "進行中", startDate: "2025-10-27", endDate: "2025-11-20", result: "前往" },
-    { id: 7, name: 'Lithium', description: "&#21839;&#21367;的發生，到底需要如何做到，不&#21839;&#21367;的發生，又會如何產生。莎士比亞有說過，不良的習慣會隨時阻礙你走向成名、獲利和享樂的路上去。我希望諸位也能好好地體會這句話。", status: "進行中", startDate: "2025-10-01", endDate: "2025-10-01", result: "前往" },
-    { id: 9, name: 'Beryllium', description: "你真的了解&#21839;&#21367;嗎？愛因斯坦有一句座右銘，一個人的價值，應該看他貢獻什麼，而不應當看他取得什麼。帶著這句話，我們還要更加慎重的審視這個問題：那麽，這種事實對本人來說意義重大，相信對這個世界也是有一定意義的。", status: "進行中", startDate: "2025-10-07", endDate: "2025-10-07", result: "前往" },
-    { id: 11, name: 'Boron', description: "", status: "已結束", startDate: "2025-10-07", endDate: "2025-10-07", result: "前往" },
-    { id: 1, name: 'Carbon', description: "", status: "已結束", startDate: "2025-10-07", endDate: "2025-10-07", result: "前往" },
-    { id: 2, name: 'Nitrogen', description: "", status: "已結束", startDate: "2025-10-07", endDate: "2025-10-07", result: "前往" },
-    { id: 4, name: 'Oxygen', description: "", status: "已結束", startDate: "2025-10-07", endDate: "2025-10-07", result: "前往" },
-    { id: 6, name: 'Fluorine', description: "", status: "已結束", startDate: "2025-10-07", endDate: "2025-10-07", result: "前往" },
-    { id: 8, name: 'Neon', description: "", status: "已結束", startDate: "2025-10-07", endDate: "2025-10-07", result: "前往" },
-    { id: 10, name: 'Sodium', description: "", status: "已結束", startDate: "2025-10-07", endDate: "2025-10-07", result: "前往" },
-    { id: 13, name: 'Magnesium', description: "", status: "已結束", startDate: "2025-10-07", endDate: "2025-10-07", result: "前往" },
-    { id: 12, name: 'Aluminum', description: "", status: "已結束", startDate: "2025-10-07", endDate: "2025-10-07", result: "前往" },
-    { id: 20, name: 'Silicon', description: "", status: "已結束", startDate: "2025-10-07", endDate: "2025-10-07", result: "前往" },
-    { id: 19, name: 'Phosphorus', description: "", status: "已結束", startDate: "2025-10-07", endDate: "2025-10-07", result: "前往" },
-    { id: 17, name: 'Sulfur', description: "", status: "已結束", startDate: "2025-10-07", endDate: "2025-10-07", result: "前往" },
-    { id: 16, name: 'Chlorine', description: "", status: "已結束", startDate: "2025-10-07", endDate: "2025-10-07", result: "前往" },
-    { id: 15, name: 'Argon', description: "", status: "已結束", startDate: "2025-10-07", endDate: "2025-10-07", result: "前往" },
-    { id: 18, name: 'Potassium', description: "", status: "已結束", startDate: "2025-10-07", endDate: "2025-10-07", result: "前往" },
-    { id: 24, name: 'Calcium', description: "", status: "已結束", startDate: "2025-10-07", endDate: "2025-10-07", result: "前往" },
+    {
+      id: 1,
+      name: '工作滿意度調查',
+      description: "工作的意義在於實現自我價值。如何在壓力與成就之間取得平衡，是每個人都需要思考的問題。",
+      status: "進行中",
+      startDate: "2025-11-01",
+      endDate: "2025-11-15",
+      result: "前往"
+    },
+    {
+      id: 2,
+      name: '公司環境與文化問卷',
+      description: "良好的工作環境能激發員工的潛力。那麼，公司文化與氛圍的營造，究竟該如何影響員工滿意度呢？",
+      status: "尚未開始",
+      startDate: "2025-11-20",
+      endDate: "2025-12-05",
+      result: "前往"
+    },
+    {
+      id: 3,
+      name: '員工健康與壓力調查',
+      description: "健康是一切的基礎。當壓力成為日常的一部分，我們該如何維持心理與身體的平衡？",
+      status: "進行中",
+      startDate: "2025-11-03",
+      endDate: "2025-11-20",
+      result: "前往"
+    },
+    {
+      id: 4,
+      name: '遠端工作經驗問卷',
+      description: "隨著科技發展，遠端工作已成常態。你對遠端工作的效率與挑戰有何看法？",
+      status: "尚未開始",
+      startDate: "2025-12-01",
+      endDate: "2025-12-15",
+      result: "前往"
+    },
+    {
+      id: 5,
+      name: '年度培訓成效評估',
+      description: "學習與成長是企業發展的核心。培訓是否真的讓你有所收穫？",
+      status: "已結束",
+      startDate: "2025-10-01",
+      endDate: "2025-10-10",
+      result: "前往"
+    },
+    {
+      id: 6,
+      name: '部門合作滿意度調查',
+      description: "團隊合作是成功的基礎。你認為跨部門溝通是否順暢？",
+      status: "進行中",
+      startDate: "2025-11-05",
+      endDate: "2025-11-18",
+      result: "前往"
+    },
+    {
+      id: 7,
+      name: '工作與生活平衡問卷',
+      description: "當生活節奏越來越快，如何在工作與家庭之間取得平衡，成為許多人心中的課題。",
+      status: "尚未開始",
+      startDate: "2025-11-25",
+      endDate: "2025-12-05",
+      result: "前往"
+    },
+    {
+      id: 8,
+      name: '內部溝通效率調查',
+      description: "有效的溝通能提升團隊的凝聚力。你認為目前的資訊流通是否足夠透明？",
+      status: "進行中",
+      startDate: "2025-11-02",
+      endDate: "2025-11-17",
+      result: "前往"
+    },
+    {
+      id: 9,
+      name: '新進員工適應情況問卷',
+      description: "對新員工而言，入職初期的體驗非常關鍵。你是否覺得公司的培訓與輔導足夠完善？",
+      status: "已結束",
+      startDate: "2025-09-15",
+      endDate: "2025-09-30",
+      result: "前往"
+    },
+    {
+      id: 10,
+      name: '主管領導風格評估',
+      description: "領導風格影響團隊氛圍與績效。你認為主管在激勵與指導上表現如何？",
+      status: "進行中",
+      startDate: "2025-11-01",
+      endDate: "2025-11-12",
+      result: "前往"
+    },
+    {
+      id: 11,
+      name: '顧客服務品質調查',
+      description: "顧客滿意是品牌成功的關鍵。你認為我們的服務流程是否友善且高效？",
+      status: "尚未開始",
+      startDate: "2025-12-10",
+      endDate: "2025-12-25",
+      result: "前往"
+    },
+    {
+      id: 12,
+      name: '產品滿意度調查',
+      description: "產品品質與使用體驗密不可分。你的使用感受是否符合預期？",
+      status: "已結束",
+      startDate: "2025-10-10",
+      endDate: "2025-10-20",
+      result: "前往"
+    },
+    {
+      id: 13,
+      name: '年度活動回饋問卷',
+      description: "每一次活動的舉辦，都是團隊努力的成果。你的參與體驗如何？",
+      status: "已結束",
+      startDate: "2025-09-20",
+      endDate: "2025-09-30",
+      result: "前往"
+    },
+    {
+      id: 14,
+      name: '福利制度滿意度調查',
+      description: "福利制度不僅反映企業文化，也影響員工忠誠度。你對現行制度的滿意度如何？",
+      status: "進行中",
+      startDate: "2025-11-04",
+      endDate: "2025-11-18",
+      result: "前往"
+    },
+    {
+      id: 15,
+      name: '公司整體滿意度調查',
+      description: "公司整體的發展與員工感受息息相關。你的滿意度能幫助我們持續改善。",
+      status: "尚未開始",
+      startDate: "2025-11-25",
+      endDate: "2025-12-05",
+      result: "前往"
+    }
   ];
+
 
   // 設定預覽草稿
   setDraftData(data: ReviewDraft): void {

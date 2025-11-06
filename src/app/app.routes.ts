@@ -6,6 +6,7 @@ import { ResultComponent } from './result/result.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { MemberDashboardComponent } from './member-dashboard/member-dashboard.component';
+import { AdminComponent } from './admin/admin.component';
 
 export const routes: Routes = [
   {
@@ -27,11 +28,17 @@ export const routes: Routes = [
   {
     path: "result", component: ResultComponent,
   },
+
   {
     path: "login", component: LoginComponent,
   },
+
   {
     path: "register", component: RegisterComponent,
+  },
+
+  {
+    path: "admin", component: AdminComponent,
   },
 
   { path: "", redirectTo: "login", pathMatch: 'prefix' }

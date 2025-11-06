@@ -7,6 +7,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 
+
+// sweetalert
+import Swal from 'sweetalert2';
+
+
 @Component({
   selector: 'app-login',
   imports: [
@@ -33,10 +38,19 @@ export class LoginComponent {
 
   constructor(private router: Router, private loadingService: LoadingService) { }
   login() {
-    this.loadingService.show();
-    setTimeout(() => {
-      this.router.navigateByUrl('list')
-    }, 600);
+    if (this.userEmail == "123" || this.userPassword == "123") {
+      Swal.fire({
+        title: "登入失敗!",
+        text: "帳號或密碼格式錯誤",
+        icon: "error",
+      });
+    }
+    else {
+      this.loadingService.show();
+      setTimeout(() => {
+        this.router.navigateByUrl('list')
+      }, 600);
+    }
   }
 
   goRegister() {
@@ -45,6 +59,11 @@ export class LoginComponent {
       this.router.navigateByUrl('register');
       this.isFlipping = false;
     }, 600)
+  }
+
+  admin() {
+    this.router.navigateByUrl('admin');
+
   }
 
   ngOnInit(): void {

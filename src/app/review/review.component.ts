@@ -2,6 +2,11 @@ import { Router } from '@angular/router';
 import { QuestionnaireService } from './../@services/questionnaire.service';
 import { Component } from '@angular/core';
 
+
+// sweetalert
+import Swal from 'sweetalert2';
+
+
 @Component({
   selector: 'app-review',
   imports: [],
@@ -53,8 +58,17 @@ export class ReviewComponent {
       console.log(finalJsonData);
 
       this.questionnaireService.clearDraftData();
-      // 導航到成功頁面
-      this.router.navigate(['/list']);
+
+      Swal.fire({
+        title: "提交成功!",
+        icon: "success",
+        showConfirmButton: false,
+        timer: 1500
+      });
+      setTimeout(() => {
+        // 導航到成功頁面
+        this.router.navigate(['/list']);
+      }, 1500);
     }
 
   }
