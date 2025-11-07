@@ -7,6 +7,7 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { MemberDashboardComponent } from './member-dashboard/member-dashboard.component';
 import { AdminComponent } from './admin/admin.component';
+import { ManageComponent } from './manage/manage.component';
 
 export const routes: Routes = [
   {
@@ -39,6 +40,9 @@ export const routes: Routes = [
 
   {
     path: "admin", component: AdminComponent,
+  },
+  {
+    path: "manage", component: ManageComponent
   },
 
   { path: "", redirectTo: "login", pathMatch: 'prefix' }

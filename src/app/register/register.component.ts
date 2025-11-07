@@ -7,6 +7,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 
 
+// sweetalert
+import Swal from 'sweetalert2';
+
 @Component({
   selector: 'app-register',
   imports: [MatIconModule,
@@ -31,7 +34,15 @@ export class RegisterComponent {
 
   constructor(private router: Router) { }
   finish() {
-    console.log("23");
+    Swal.fire({
+      title: "註冊成功！",
+      icon: "success",
+      timer: 1500,
+      showConfirmButton: false
+    });
+    setTimeout(() => {
+      this.router.navigateByUrl('login');
+    }, 1600);
 
   }
 

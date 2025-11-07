@@ -1,0 +1,98 @@
+.loader {
+  width: 50px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 8px solid lightblue;
+  border-right-color: orange;
+  animation: l2 1s infinite linear;
+}
+
+@keyframes flipInFromRight {
+  from {
+    /* 從 "翻轉離開" 的結束狀態 (180度) 開始 */
+    transform: rotateY(180deg) scale(0.7);
+    opacity: 0;
+  }
+
+  to {
+    /* 結束於正常狀態 */
+    transform: rotateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.loginContainer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #f5f2ead8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url("../images/bg.png");
+  background-size: 100%;
+  background-repeat: no-repeat;
+}
+
+
+.userInfo {
+  width: 30%;
+  height: 60%;
+  border-radius: 25px;
+  background-color: rgba(255, 255, 255, 0.6);
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease-in-out, opacity 0.5s ease-in;
+  perspective: 1000px;
+
+  animation: flipInFromRight 0.6s ease-out;
+
+}
+
+.userInfo.is-flipping-out {
+  /* 1. 沿著 Y 軸翻轉 -180 度 (飛走)
+    2. 同時縮小到 70%
+  */
+  transform: rotateY(-180deg) scale(0.7);
+
+  /* 3. 同時淡出，讓它消失 */
+  opacity: 0;
+}
+
+@keyframes l2 {
+  to {
+    transform: rotate(1turn)
+  }
+}
+
+.loginBtn {
+  width: 75%;
+  padding: 1.5vh 0.5vw;
+  font-size: medium;
+  font-weight: 600;
+  border-radius: 5px;
+  border: none;
+  background-color: #FDC886;
+  margin-top: 3vh;
+}
+
+
+.loginBtn:hover {
+  background-color: #ec8735;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  transform: scale(1.05);
+}
+
+.regBtn {
+  border: none;
+  background: none;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.regBtn:hover {
+  color: dodgerblue;
+}
+
+.regBtn:active .userInfo {
+  transform: rotateY(180deg);
+}

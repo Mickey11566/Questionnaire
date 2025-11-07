@@ -1,4 +1,3 @@
-import { LoadingService } from './../@services/loading.service';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -27,16 +26,13 @@ export class LoginComponent {
   userEmail!: string;
   userPassword!: string;
 
-  // 載入動畫
-  showLoading!: boolean;
-
   // 密碼隱藏顯示
   pwdHide: boolean = true;
 
   //翻轉卡片
   isFlipping: boolean = false;
 
-  constructor(private router: Router, private loadingService: LoadingService) { }
+  constructor(private router: Router) { }
   login() {
     if (this.userEmail == "123" || this.userPassword == "123") {
       Swal.fire({
@@ -46,10 +42,15 @@ export class LoginComponent {
       });
     }
     else {
-      this.loadingService.show();
+      Swal.fire({
+        title: "登入成功!",
+        icon: "success",
+        timer: 1200,
+        showConfirmButton: false
+      });
       setTimeout(() => {
         this.router.navigateByUrl('list')
-      }, 600);
+      }, 1300);
     }
   }
 
@@ -66,9 +67,4 @@ export class LoginComponent {
 
   }
 
-  ngOnInit(): void {
-    this.loadingService._secondLoading$.subscribe((res) => {
-      this.showLoading = res;
-    })
-  }
 }

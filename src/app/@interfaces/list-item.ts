@@ -5,7 +5,6 @@ export interface ListItem {
   status: string; //問卷狀態
   startDate: string; //問卷開始日期
   endDate: string;//問卷結束日期
-  result: string; //問卷結果
 }
 
 

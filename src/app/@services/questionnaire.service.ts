@@ -14,7 +14,6 @@ export class QuestionnaireService {
   status!: string; //問卷狀態
   startDate!: string; //問卷開始日期
   endDate!: string;//問卷結束日期
-  result!: string; //問卷結果
 
   // 問卷填寫的內容
   inputName!: string;  //填寫的名字
@@ -77,7 +76,6 @@ export class QuestionnaireService {
       status: "進行中",
       startDate: "2025-11-01",
       endDate: "2025-11-15",
-      result: "前往"
     },
     {
       id: 2,
@@ -86,7 +84,6 @@ export class QuestionnaireService {
       status: "尚未開始",
       startDate: "2025-11-20",
       endDate: "2025-12-05",
-      result: "前往"
     },
     {
       id: 3,
@@ -95,7 +92,6 @@ export class QuestionnaireService {
       status: "進行中",
       startDate: "2025-11-03",
       endDate: "2025-11-20",
-      result: "前往"
     },
     {
       id: 4,
@@ -104,7 +100,6 @@ export class QuestionnaireService {
       status: "尚未開始",
       startDate: "2025-12-01",
       endDate: "2025-12-15",
-      result: "前往"
     },
     {
       id: 5,
@@ -113,7 +108,6 @@ export class QuestionnaireService {
       status: "已結束",
       startDate: "2025-10-01",
       endDate: "2025-10-10",
-      result: "前往"
     },
     {
       id: 6,
@@ -122,7 +116,6 @@ export class QuestionnaireService {
       status: "進行中",
       startDate: "2025-11-05",
       endDate: "2025-11-18",
-      result: "前往"
     },
     {
       id: 7,
@@ -131,7 +124,6 @@ export class QuestionnaireService {
       status: "尚未開始",
       startDate: "2025-11-25",
       endDate: "2025-12-05",
-      result: "前往"
     },
     {
       id: 8,
@@ -140,7 +132,6 @@ export class QuestionnaireService {
       status: "進行中",
       startDate: "2025-11-02",
       endDate: "2025-11-17",
-      result: "前往"
     },
     {
       id: 9,
@@ -149,7 +140,6 @@ export class QuestionnaireService {
       status: "已結束",
       startDate: "2025-09-15",
       endDate: "2025-09-30",
-      result: "前往"
     },
     {
       id: 10,
@@ -158,7 +148,6 @@ export class QuestionnaireService {
       status: "進行中",
       startDate: "2025-11-01",
       endDate: "2025-11-12",
-      result: "前往"
     },
     {
       id: 11,
@@ -167,7 +156,6 @@ export class QuestionnaireService {
       status: "尚未開始",
       startDate: "2025-12-10",
       endDate: "2025-12-25",
-      result: "前往"
     },
     {
       id: 12,
@@ -176,7 +164,6 @@ export class QuestionnaireService {
       status: "已結束",
       startDate: "2025-10-10",
       endDate: "2025-10-20",
-      result: "前往"
     },
     {
       id: 13,
@@ -185,7 +172,6 @@ export class QuestionnaireService {
       status: "已結束",
       startDate: "2025-09-20",
       endDate: "2025-09-30",
-      result: "前往"
     },
     {
       id: 14,
@@ -194,7 +180,6 @@ export class QuestionnaireService {
       status: "進行中",
       startDate: "2025-11-04",
       endDate: "2025-11-18",
-      result: "前往"
     },
     {
       id: 15,
@@ -203,7 +188,6 @@ export class QuestionnaireService {
       status: "尚未開始",
       startDate: "2025-11-25",
       endDate: "2025-12-05",
-      result: "前往"
     }
   ];
 

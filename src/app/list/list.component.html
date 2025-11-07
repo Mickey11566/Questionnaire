@@ -33,7 +33,6 @@
         <th class="status-col">狀態</th>
         <th>開始日期</th>
         <th>結束日期</th>
-        <th>結果</th>
         <th>填寫</th>
       </tr>
     </thead>
@@ -52,12 +51,6 @@
 
         <td>{{ item.startDate }}</td>
         <td>{{ item.endDate }}</td>
-
-        <td class="action-cell">
-          @if (item.status === "已結束") {
-          <button class="result-button">{{ item.result }}</button>
-          }
-        </td>
 
         <td class="action-cell">
           @if (item.status === "進行中") {

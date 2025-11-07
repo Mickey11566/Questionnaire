@@ -1,1 +1,33 @@
-<p>admin works!</p>
+<div class="loginContainer">
+
+  <div class="userInfo" [class.is-flipping-out]="isFlipping">
+    <div style=" display: flex; flex-direction: column; align-items: center; gap: 0.1vw;">
+      <h1>Admin Login</h1>
+      <p style="font-size: medium; font-weight: 500;">Hi, Welcome back!</p>
+    </div>
+    <div style="
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap:1vw;
+    margin: 2vh 0">
+      <mat-form-field style="width: 75%;" appearance="outline" class="email-form-field">
+        <mat-icon matSuffix>mail</mat-icon>
+        <input required matInput type="text" placeholder="Email" [(ngModel)]="userEmail">
+      </mat-form-field>
+
+
+      <mat-form-field style="width: 75%;" appearance="outline" class="password-form-field">
+        <input required placeholder="Password" [(ngModel)]="userPassword" matInput
+          [type]="pwdHide ? 'password' : 'text'">
+        <button style="border: none; background: none; margin-right: 0.3vw;" mat-icon-button matSuffix
+          (click)="pwdHide = !pwdHide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="pwdHide">
+          <mat-icon>{{pwdHide ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <button (click)="login()" class="loginBtn">Login</button>
+    </div>
+  </div>
+</div>
