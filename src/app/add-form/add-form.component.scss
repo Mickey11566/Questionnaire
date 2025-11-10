@@ -1,12 +1,11 @@
 main {
   width: 100%;
   height: 100%;
-}
-
-.formAnswer {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
+  justify-items: center;
 }
 
 .navBar {
@@ -109,4 +108,46 @@ ul li .title {
 ul li:hover .title {
   transform: scale(1);
   transition-delay: 0.25s;
+}
+
+.cancleBtn {
+  padding: 1vh;
+  font-weight: 700;
+  font-size: 1vw;
+  color: white;
+  background-color: #4a4948;
+  border: none;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: #9a9a99;
+    transition: transform 0.75s;
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transition: transform 0.5s;
+    transform: scale(0.9);
+  }
+}
+
+.nextBtn {
+  padding: 1vh;
+  font-weight: 700;
+  font-size: 1vw;
+  color: white;
+  background-color: #d5a972;
+  border: none;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: #f4ba74;
+    transition: transform 0.75s;
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transition: transform 0.5s;
+    transform: scale(0.9);
+  }
 }

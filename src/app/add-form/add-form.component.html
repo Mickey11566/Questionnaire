@@ -1,0 +1,63 @@
+<main>
+
+  <div
+    style="width: 30%; height: 60%; border: 2px solid #d5a972; border-radius: 5px; display: flex; flex-direction: column; justify-content: center; padding: 1vh 1vw;">
+
+    <form class="form">
+      <h3>
+        <mat-label>問卷名稱</mat-label>
+      </h3>
+      <mat-form-field style="width: 100%;" class="example-full-width">
+        <input maxlength="30" matInput placeholder="輸入問卷名稱" value="">
+      </mat-form-field>
+      <br>
+      <h3>
+        <mat-label>問卷內容描述</mat-label>
+      </h3>
+      <mat-form-field style="width: 100%;" class="example-full-width">
+        <textarea maxlength="100" rows="4" matInput placeholder="輸入問卷描述"></textarea>
+      </mat-form-field>
+
+
+      <br>
+      <h3>問卷開放時間</h3>
+      <mat-form-field>
+        <mat-label>選擇問卷開放期間</mat-label>
+        <mat-date-range-input [rangePicker]="picker">
+          <input matStartDate placeholder="開始日期">
+          <input matEndDate placeholder="結束日期">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
+
+      <br>
+      <div style="display: flex; gap: 1vw; justify-content: end;">
+        <button class="cancleBtn" (click)="toList()">取消</button>
+        <button class="nextBtn" (click)="toSettings()">下一步</button>
+      </div>
+
+    </form>
+  </div>
+
+</main>
+
+<nav class="navBar">
+
+  <!-- <button>
+  </button>
+  <button>
+    <mat-icon aria-hidden="false" aria-label="logout icon" fontIcon="logout"></mat-icon>
+  </button> -->
+  <ul>
+    <li (click)="list()" style="--i:#FF9966;--j:#FF5E62">
+      <span class="icon"> <mat-icon aria-hidden="false" aria-label="format_list_bulleted icon"
+          fontIcon="format_list_bulleted"></mat-icon></span>
+      <span class="title">問卷清單</span>
+    </li>
+    <li (click)="logout()" style="--i:#FF9966;--j:#FF5E62">
+      <span class="icon"> <mat-icon aria-hidden="false" aria-label="logout icon" fontIcon="logout"></mat-icon></span>
+      <span class="title">登出</span>
+    </li>
+  </ul>
+</nav>

@@ -38,8 +38,10 @@ export class MemberDashboardComponent {
       showConfirmButton: true,
       showCancelButton: true,
       position: "center",
-      confirmButtonText: "Yes",
-      cancelButtonText: "No",
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "確定",
+      cancelButtonText: "取消",
     }).then((res) => {
       if (res.isConfirmed) {
         Swal.fire({

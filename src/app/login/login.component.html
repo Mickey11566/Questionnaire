@@ -14,7 +14,14 @@
     margin: 2vh 0">
       <mat-form-field style="width: 75%;" appearance="outline" class="email-form-field">
         <mat-icon matSuffix>mail</mat-icon>
-        <input required matInput type="text" placeholder="Email" [(ngModel)]="userEmail">
+        <input [formControl]="emailFormControl" [errorStateMatcher]="matcher" required matInput type="text"
+          placeholder="Email" [(ngModel)]="userEmail">
+        @if (emailFormControl.hasError('email') && !emailFormControl.hasError('required')) {
+        <mat-error>請輸入正確的email格式</mat-error>
+        }
+        @if (emailFormControl.hasError('required')) {
+        <mat-error>請輸入 <strong>Email</strong></mat-error>
+        }
       </mat-form-field>
 
 
@@ -37,5 +44,5 @@
 </div>
 
 <button (click)="admin()"
-  style="position: absolute; left: 2%; top: 3%; background: none;border: none; color: #1F1F1E;">₍^. .^₎⟆
+  style="position: absolute; left: 2.5%; top: 3%; background: none;border: none; color: #1F1F1E;">₍^. .^₎⟆
 </button>

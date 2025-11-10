@@ -8,6 +8,7 @@ import { RegisterComponent } from './register/register.component';
 import { MemberDashboardComponent } from './member-dashboard/member-dashboard.component';
 import { AdminComponent } from './admin/admin.component';
 import { ManageComponent } from './manage/manage.component';
+import { AddFormComponent } from './add-form/add-form.component';
 
 export const routes: Routes = [
   {
@@ -43,6 +44,9 @@ export const routes: Routes = [
   },
   {
     path: "manage", component: ManageComponent
+  },
+  {
+    path: "addForm", component: AddFormComponent
   },
 
   { path: "", redirectTo: "login", pathMatch: 'prefix' }

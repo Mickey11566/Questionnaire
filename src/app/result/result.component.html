@@ -1,18 +1,36 @@
-<div style="width: 30%;">
-  <mat-accordion>
-    <mat-expansion-panel (opened)="panelOpenState.set(true)" (closed)="panelOpenState.set(false)">
-      <mat-expansion-panel-header>
-        <mat-panel-title> 查看答案 </mat-panel-title>
-        <mat-panel-description>
-          點擊{{panelOpenState() ? '關閉' : '查看'}}答案
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      @for(num of times; track num) {
-      <p>第{{num}}個回答</p>
-      }
-      <div>
-        <canvas id="chart"></canvas>
-      </div>
-    </mat-expansion-panel>
-  </mat-accordion>
-</div>
+<main>
+  <div class="formAnswer">
+    <mat-accordion>
+      <mat-expansion-panel (click)="openChart()" (opened)="panelOpenState.set(true)"
+        (closed)="panelOpenState.set(false)">
+        <mat-expansion-panel-header>
+          <mat-panel-title> 查看答案 </mat-panel-title>
+          <mat-panel-description>
+            點擊{{panelOpenState() ? '關閉' : '查看'}}答案
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        @for(num of times; track num) {
+        <p>第{{num}}個回答</p>
+        }
+        <div>
+          <canvas id="chart"></canvas>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+</main>
+
+
+<nav class="navBar">
+  <ul>
+    <li (click)="checkList()" style="--i:#FF9966;--j:#FF5E62">
+      <span class="icon"> <mat-icon aria-hidden="false" aria-label="list icon"
+          fontIcon="format_list_bulleted"></mat-icon></span>
+      <span class="title">問卷清單</span>
+    </li>
+    <li (click)="logout()" style="--i:#FF9966;--j:#FF5E62">
+      <span class="icon"> <mat-icon aria-hidden="false" aria-label="logout icon" fontIcon="logout"></mat-icon></span>
+      <span class="title">登出</span>
+    </li>
+  </ul>
+</nav>

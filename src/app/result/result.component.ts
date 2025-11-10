@@ -1,12 +1,21 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import Chart from 'chart.js/auto';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { Router } from '@angular/router';
+
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormsModule } from '@angular/forms';
 
 
 
 @Component({
   selector: 'app-result',
-  imports: [MatExpansionModule],
+  imports: [MatExpansionModule, MatIconModule,
+    MatInputModule,
+    MatFormFieldModule,
+    FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './result.component.html',
   styleUrl: './result.component.scss'
@@ -15,12 +24,12 @@ export class ResultComponent {
 
   times = [1, 2, 3, 4, 5, 6, 7, 8];
 
-  readonly panelOpenState = signal(false);
+  readonly panelOpenState = signal(false)
+
+  constructor(private router: Router) { }
 
 
-  ngOnInit(): void {
-    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-    //Add 'implements OnInit' to the class.
+  openChart() {
     // 獲取 canvas 元素
     let ctx = document.getElementById('chart') as HTMLCanvasElement;
 
@@ -54,5 +63,14 @@ export class ResultComponent {
     });
 
     chart.resize(500, 300);
+  }
+
+  checkList() {
+    this.router.navigateByUrl('manage');
+  }
+
+
+  logout() {
+    this.router.navigateByUrl('login');
   }
 }

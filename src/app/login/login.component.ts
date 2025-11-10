@@ -1,10 +1,27 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
+import { ErrorStateMatcher } from '@angular/material/core';
+import {
+  FormControl,
+  FormGroupDirective,
+  NgForm,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { FormsModule } from '@angular/forms';
+
+/** Error when invalid control is dirty, touched, or submitted. */
+export class MyErrorStateMatcher implements ErrorStateMatcher {
+  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    const isSubmitted = form && form.submitted;
+    return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
+  }
+}
 
 
 // sweetalert
@@ -17,11 +34,18 @@ import Swal from 'sweetalert2';
     MatIconModule,
     MatInputModule,
     MatFormFieldModule,
-    FormsModule],
+    FormsModule, ReactiveFormsModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
+
+
 export class LoginComponent {
+
+  emailFormControl = new FormControl('', [Validators.required, Validators.email]);
+
+
+  matcher = new MyErrorStateMatcher();
 
   userEmail!: string;
   userPassword!: string;

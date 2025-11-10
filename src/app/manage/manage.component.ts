@@ -25,16 +25,14 @@ import Swal from 'sweetalert2';
 })
 export class ManageComponent {
 
-  startDate!: string;
-  endDate!: string;
+  startDate!: Date;
+  endDate!: Date;
   searchData: string = '';
 
   name!: string;
   id!: number;
   status!: string;
   result!: string;
-  userStartDate!: Date;
-  userEndDate!: Date;
   currentPage = 1;         // 當前頁碼 (從 1 開始)
   itemsPerPage = 10;       // 每頁顯示的筆數
   totalItems = 0;          // 總筆數
@@ -203,7 +201,7 @@ export class ManageComponent {
     }
 
     // 根據「日期區間」進行篩選 (如果 userStartDate 或 userEndDate 有值)
-    if (this.userStartDate || this.userEndDate) {
+    if (this.startDate || this.endDate) {
       tempArray = tempArray.filter(data => {
         // 將資料中的日期字串轉換為 Date 物件，以便比較
         const itemStartDate = new Date(data.startDate);
@@ -211,9 +209,9 @@ export class ManageComponent {
 
         // 將使用者選擇的日期進行調整，以便進行區間判斷
         // 開始日期：應當包含當日（所以時間用 00:00:00）
-        const searchStart = this.userStartDate ? new Date(this.userStartDate.setHours(0, 0, 0, 0)) : null;
+        const searchStart = this.startDate ? new Date(this.startDate.setHours(0, 0, 0, 0)) : null;
         // 結束日期：應當包含當日（所以時間用 23:59:59）
-        const searchEnd = this.userEndDate ? new Date(this.userEndDate.setHours(23, 59, 59, 999)) : null;
+        const searchEnd = this.endDate ? new Date(this.endDate.setHours(23, 59, 59, 999)) : null;
 
 
         // 判斷問卷的區間是否與搜尋區間有交集
@@ -240,7 +238,7 @@ export class ManageComponent {
   }
 
   addForm() {
-    console.log('123');
+    this.router.navigateByUrl("addForm");
   }
 
   logout() {
