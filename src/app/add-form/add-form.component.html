@@ -51,7 +51,7 @@
       <h3>問卷開放時間</h3>
       <mat-form-field>
         <mat-label>選擇問卷開放期間</mat-label>
-        <mat-date-range-input [rangePicker]="picker">
+        <mat-date-range-input [rangePicker]="picker" [min]="minDate">
           <input matStartDate placeholder="開始日期" formControlName="startDate">
           <input matEndDate placeholder="結束日期" formControlName="endDate">
         </mat-date-range-input>

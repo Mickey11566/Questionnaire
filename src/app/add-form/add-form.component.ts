@@ -65,12 +65,17 @@ export class AddFormComponent {
   // 當前編輯的完整問卷資料
   currentSurveyData!: Survey;
 
+  minDate: Date;
+
+
   constructor(
     private fb: FormBuilder, // 響應式表單的服務
     private questionnaireService: QuestionnaireService, // 您的問卷服務
     private router: Router,
     private route: ActivatedRoute
-  ) { }
+  ) {
+    this.minDate = new Date();
+  }
 
   ngOnInit(): void {
     // 初始化步驟一的表單

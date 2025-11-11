@@ -5,6 +5,7 @@ import { Component } from '@angular/core';
 
 // sweetalert
 import Swal from 'sweetalert2';
+import { ReviewDraft } from '../@interfaces/list-item';
 
 
 @Component({
@@ -20,7 +21,8 @@ export class ReviewComponent {
   userAge!: number;
   userContent!: string;
 
-  reviewData: any;
+  reviewData: ReviewDraft | null = null;
+  questionnaireBasicInfo: any; // 用來儲存 name/description/date 等資訊
 
   // 導航到 Review 路由
   // 新增一個專門的 Review 頁面路由，並從服務中取出暫存的資料。
@@ -29,54 +31,41 @@ export class ReviewComponent {
   ngOnInit(): void {
     this.reviewData = this.questionnaireService.getDraftData();
 
-    this.userName = this.questionnaireService.inputName;
-    this.userAge = this.questionnaireService.inputAge;
-    this.userContent = this.questionnaireService.inputContent;
-
-
-    if (!this.reviewData) {
-      // 如果沒有資料，可以選擇跳轉回表單頁面
-      this.router.navigate(['/form']);
-
-
+    if (this.reviewData && this.reviewData.surveyId) {
+      // 為了在預覽頁面顯示 name, description, startDate, endDate，我們需要再次從 Service 獲取
+      this.questionnaireBasicInfo = this.questionnaireService.getQuestionnaireById(this.reviewData.surveyId);
+    } else {
+      console.warn('沒有預覽資料，返回。');
     }
   }
 
-  comfirm() {
+  submitForm() {
     if (this.reviewData) {
-      // 建立一個僅包含答案的 JSON 物件
-      let answersOnly = {
-        inputName: this.reviewData.inputName,
-        inputAge: this.reviewData.inputAge,
-        fruitOption: this.reviewData.fruitOption,
-        inputContent: this.reviewData.inputContent
-      };
-
       // **console.log 出使用者選擇的答案 JSON 格式**
-      const finalJsonData = JSON.stringify(answersOnly, null, 2);
+      // 這裡直接 log 整個 answers 物件
+      const finalJsonData = JSON.stringify(this.reviewData.answers, null, 2);
 
+      console.log('--- 使用者填寫的答案 JSON 格式 ---');
       console.log(finalJsonData);
+      console.log('------------------------------------');
 
       this.questionnaireService.clearDraftData();
-
       Swal.fire({
-        title: "提交成功!",
+        title: "提交完成！",
         icon: "success",
-        showConfirmButton: false,
-        timer: 1500
+        timer: 1200,
+        showConfirmButton: false
       });
       setTimeout(() => {
-        // 導航到成功頁面
-        this.router.navigate(['/list']);
-      }, 1500);
+        this.router.navigateByUrl('list')
+      }, 1300);
     }
-
   }
 
-  back() {
-    // 返回表單填寫頁面 (需要 ID)
-    if (this.reviewData && this.reviewData.questionnaireId) {
-      this.router.navigate(['/form', this.reviewData.questionnaireId]);
+  goBack() {
+    // 導航回表單頁面
+    if (this.reviewData && this.reviewData.surveyId) {
+      this.router.navigate(['/form', this.reviewData.surveyId]);
     } else {
       this.router.navigate(['/']);
     }
