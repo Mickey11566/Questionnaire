@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 // sweetalert
@@ -25,6 +25,14 @@ export class MemberDashboardComponent {
   pwdHide: boolean = true;
   userName!: string;
   userPhone!: string;
+
+  //密碼長度
+  readonly minLength = 6;
+
+  // email及密碼輸入確認
+  passwordFormControl = new FormControl('', [Validators.required, Validators.minLength(this.minLength)]);
+  nameFormControl = new FormControl('', [Validators.required]);
+  phoneFormControl = new FormControl('', [Validators.required]);
 
   constructor(private router: Router) { }
 

@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormsModule, Validators } from '@angular/forms';
 
 
 // sweetalert
@@ -32,18 +32,42 @@ export class RegisterComponent {
   // 翻轉卡片
   isFlippingOut: boolean = false;
 
+  //密碼長度
+  readonly minLength = 6;
+
+  // email及密碼輸入確認
+  emailFormControl = new FormControl('', [Validators.required, Validators.email]);
+  passwordFormControl = new FormControl('', [Validators.required, Validators.minLength(this.minLength)]);
+  nameFormControl = new FormControl('', [Validators.required]);
+  phoneFormControl = new FormControl('', [Validators.required]);
+
+
+
   constructor(private router: Router) { }
   finish() {
-    Swal.fire({
-      title: "註冊成功！",
-      icon: "success",
-      timer: 1500,
-      showConfirmButton: false
-    });
-    setTimeout(() => {
-      this.router.navigateByUrl('login');
-    }, 1600);
-
+    if (this.userEmail &&
+      this.userPassword &&
+      this.userName &&
+      this.userPhone) {
+      Swal.fire({
+        title: "註冊成功！",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false
+      });
+      setTimeout(() => {
+        this.router.navigateByUrl('login');
+      }, 1600);
+    }
+    else {
+      Swal.fire({
+        title: "註冊失敗！",
+        text: "請輸入必填的內容",
+        icon: "error",
+        timer: 1500,
+        showConfirmButton: false
+      });
+    }
   }
 
   goLogin() {

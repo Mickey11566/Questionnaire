@@ -48,6 +48,8 @@ export const routes: Routes = [
   {
     path: "addForm", component: AddFormComponent
   },
+  // 修改問卷 (使用相同的元件，並可以接收 ID 查詢參數)
+  { path: 'survey/edit', component: AddFormComponent },
 
   { path: "", redirectTo: "login", pathMatch: 'prefix' }
 

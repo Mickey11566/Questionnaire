@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { ErrorStateMatcher } from '@angular/material/core';
@@ -41,13 +41,16 @@ import Swal from 'sweetalert2';
 
 
 export class LoginComponent {
-
-  emailFormControl = new FormControl('', [Validators.required, Validators.email]);
-
-
+  //密碼長度
+  readonly minLength = 6;
+  // 提交表單時顯示錯誤
   matcher = new MyErrorStateMatcher();
 
-  userEmail!: string;
+  // 認證輸入確認
+  emailFormControl = new FormControl('', [Validators.required, Validators.email]);
+  passwordFormControl = new FormControl('', [Validators.required, Validators.minLength(this.minLength)]);
+
+  userEmail: string = '';
   userPassword!: string;
 
   // 密碼隱藏顯示
@@ -57,15 +60,9 @@ export class LoginComponent {
   isFlipping: boolean = false;
 
   constructor(private router: Router) { }
+
   login() {
-    if (this.userEmail == "123" || this.userPassword == "123") {
-      Swal.fire({
-        title: "登入失敗!",
-        text: "帳號或密碼格式錯誤",
-        icon: "error",
-      });
-    }
-    else {
+    if (this.userEmail == "test@gmail.com" && this.userPassword == "123456") {
       Swal.fire({
         title: "登入成功!",
         icon: "success",
@@ -75,6 +72,13 @@ export class LoginComponent {
       setTimeout(() => {
         this.router.navigateByUrl('list')
       }, 1300);
+    }
+    else {
+      Swal.fire({
+        title: "登入失敗！",
+        text: "帳號或密碼格式錯誤",
+        icon: "error",
+      });
     }
   }
 

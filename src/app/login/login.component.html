@@ -32,6 +32,12 @@
           (click)="pwdHide = !pwdHide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="pwdHide">
           <mat-icon>{{pwdHide ? 'visibility_off' : 'visibility'}}</mat-icon>
         </button>
+        @if (passwordFormControl.hasError('required')) {
+        <mat-error>密碼欄位為 <strong>必填</strong></mat-error>
+        }
+        @if (passwordFormControl.hasError('minlength')) {
+        <mat-error>密碼長度需至少為 <strong>{{ minLength }} 個字元</strong></mat-error>
+        }
       </mat-form-field>
 
       <button (click)="login()" class="loginBtn">Login</button>

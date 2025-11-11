@@ -20,6 +20,12 @@
       <mat-form-field style="width: 75%;" appearance="outline" class="email-form-field">
         <mat-icon matSuffix>mail</mat-icon>
         <input matInput type="text" placeholder="Email" [(ngModel)]="userEmail" required>
+        @if (emailFormControl.hasError('email') && !emailFormControl.hasError('required')) {
+        <mat-error>請輸入正確的email格式</mat-error>
+        }
+        @if (emailFormControl.hasError('required')) {
+        <mat-error>請輸入 <strong>Email</strong></mat-error>
+        }
       </mat-form-field>
 
 
@@ -30,16 +36,28 @@
           (click)="pwdHide = !pwdHide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="pwdHide">
           <mat-icon>{{pwdHide ? 'visibility_off' : 'visibility'}}</mat-icon>
         </button>
+        @if (passwordFormControl.hasError('required')) {
+        <mat-error>密碼欄位為 <strong>必填</strong></mat-error>
+        }
+        @if (passwordFormControl.hasError('minlength')) {
+        <mat-error>密碼長度需至少為 <strong>{{ minLength }} 個字元</strong></mat-error>
+        }
       </mat-form-field>
 
       <mat-form-field style="width: 75%;" appearance="outline" class="name-form-field">
         <mat-icon matSuffix>person</mat-icon>
         <input required matInput type="text" placeholder="Name" [(ngModel)]="userName">
+        @if (nameFormControl.hasError('required')) {
+        <mat-error>名字欄位為 <strong>必填</strong></mat-error>
+        }
       </mat-form-field>
 
       <mat-form-field style="width: 75%;" appearance="outline" class="phone-form-field">
         <mat-icon matSuffix>phone_enabled</mat-icon>
         <input required matInput type="text" placeholder="Phone" [(ngModel)]="userPhone">
+        @if (phoneFormControl.hasError('required')) {
+        <mat-error>電話欄位為 <strong>必填</strong></mat-error>
+        }
       </mat-form-field>
 
 

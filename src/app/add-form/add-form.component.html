@@ -1,45 +1,216 @@
 <main>
+  <div class="formContainer"
+    style="width: 30%; height: fit-content; border: 2px solid #d5a972; border-radius: 5px; display: flex; flex-direction: column; justify-content: center; padding: 2vh 2vw;">
 
-  <div
-    style="width: 30%; height: 60%; border: 2px solid #d5a972; border-radius: 5px; display: flex; flex-direction: column; justify-content: center; padding: 1vh 1vw;">
+    <div class="status-bar">
+      <div class="step" [ngClass]="{'active': currentStep === 'basic'}">
+        <span class="step-circle">1</span>
+        <span style="font-weight: 700;" class="step-text">問卷基本設定</span>
+      </div>
+      <div class="step-divider" [ngClass]="{'completed': currentStep !== 'basic'}"></div>
 
-    <form class="form">
+      <div class="step" [ngClass]="{'active': currentStep === 'settings'}">
+        <span class="step-circle">2</span>
+        <span style="font-weight: 700;" class="step-text">問卷題目設定</span>
+      </div>
+      <div class="step-divider" [ngClass]="{'completed': currentStep === 'preview'}"></div>
+
+      <div class="step" [ngClass]="{'active': currentStep === 'preview'}">
+        <span class="step-circle">3</span>
+        <span style="font-weight: 700;" class="step-text">問卷預覽</span>
+      </div>
+    </div>
+
+    @if (currentStep === 'basic') {
+    <form class="form" [formGroup]="basicForm">
+
       <h3>
         <mat-label>問卷名稱</mat-label>
       </h3>
       <mat-form-field style="width: 100%;" class="example-full-width">
-        <input maxlength="30" matInput placeholder="輸入問卷名稱" value="">
+        <input maxlength="30" matInput placeholder="輸入問卷名稱" formControlName="name">
+        @if (basicForm.controls['name'].hasError('required') && basicForm.controls['name'].touched) {
+        <mat-error>問卷名稱為必填項目。</mat-error>
+        }
       </mat-form-field>
+
       <br>
+
       <h3>
         <mat-label>問卷內容描述</mat-label>
       </h3>
       <mat-form-field style="width: 100%;" class="example-full-width">
-        <textarea maxlength="100" rows="4" matInput placeholder="輸入問卷描述"></textarea>
+        <textarea maxlength="100" rows="4" matInput placeholder="輸入問卷描述" formControlName="description"></textarea>
+        @if (basicForm.controls['description'].hasError('required') && basicForm.controls['description'].touched) {
+        <mat-error>問卷內容描述為必填項目。</mat-error>
+        }
       </mat-form-field>
 
-
       <br>
+
       <h3>問卷開放時間</h3>
       <mat-form-field>
         <mat-label>選擇問卷開放期間</mat-label>
         <mat-date-range-input [rangePicker]="picker">
-          <input matStartDate placeholder="開始日期">
-          <input matEndDate placeholder="結束日期">
+          <input matStartDate placeholder="開始日期" formControlName="startDate">
+          <input matEndDate placeholder="結束日期" formControlName="endDate">
         </mat-date-range-input>
         <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-date-range-picker #picker></mat-date-range-picker>
+
+        @if (basicForm.controls['startDate'].invalid && basicForm.controls['startDate'].touched) {
+        <mat-error>選擇開放期間</mat-error>
+        }
       </mat-form-field>
 
       <br>
-      <div style="display: flex; gap: 1vw; justify-content: end;">
+      <div style="display: flex; gap: 1vw; justify-content: end; margin-top: 1vh;">
         <button class="cancleBtn" (click)="toList()">取消</button>
-        <button class="nextBtn" (click)="toSettings()">下一步</button>
+        <button class="nextBtn" (click)="toSettings()" [disabled]="basicForm.invalid">下一步</button>
+      </div>
+    </form>
+    }
+    <!-- 設定問卷區塊 -->
+    @if (currentStep === 'settings') {
+    <div class="form settings-content">
+      <h2>問卷題目設定</h2>
+
+      <div class="add-question-buttons" style="display: flex; gap: 1vw; margin-bottom: 1vh;">
+        <button mat-raised-button style="color: #D67C2F" (click)="addQuestion('single')">
+          <mat-icon>radio_button_checked</mat-icon> 新增單選題
+        </button>
+        <button mat-raised-button style="color: #D67C2F" (click)="addQuestion('multiple')">
+          <mat-icon>check_box</mat-icon> 新增多選題
+        </button>
+        <button mat-raised-button style="color: #D67C2F" (click)="addQuestion('short-answer')">
+          <mat-icon>short_text</mat-icon> 新增簡答題
+        </button>
       </div>
 
-    </form>
-  </div>
+      <mat-divider></mat-divider>
 
+      @if (questions.length === 0) {
+      <div style="text-align: center; color: #888; padding: 1vw;">
+        點擊上方按鈕新增問卷題目
+      </div>
+      }
+
+      <div class="question-list" style="margin-top: 2vh;">
+        @for (q of questions; track q.id; let i = $index) {
+        <div class="question-card">
+          <div class="question-header">
+            <span class="question-index">問題 {{ i + 1 }}</span>
+
+            <mat-form-field appearance="fill" style="width: 10vw; margin-left: 1vw;">
+              <mat-label>題目類型</mat-label>
+              <mat-select [(ngModel)]="q.type">
+                <mat-option value="single">單選題</mat-option>
+                <mat-option value="multiple">多選題</mat-option>
+                <mat-option value="short-answer">簡答題</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-checkbox [(ngModel)]="q.required" style="margin-left: 1.5vw;">必填</mat-checkbox>
+
+            <button mat-icon-button color="warn" (click)="deleteQuestion(q.id)" style="margin-left: 0.5vw;">
+              <mat-icon>delete_forever</mat-icon>
+            </button>
+          </div>
+
+          <mat-form-field appearance="outline" style="width: 100%; margin-top: 2vh;">
+            <mat-label>輸入問題內容</mat-label>
+            <input matInput [(ngModel)]="q.text" placeholder="例如：您最喜歡的顏色是？">
+          </mat-form-field>
+
+          @if (q.type === 'single' || q.type === 'multiple') {
+          <div class="options-container">
+            @for (option of q.options; track $index; let j = $index) {
+            <div class="option-row">
+              <mat-icon style="margin-right: 1vw;">
+                {{ q.type === 'single' ? 'radio_button_unchecked' : 'check_box_outline_blank' }}
+              </mat-icon>
+              <mat-form-field appearance="outline" style="flex-grow: 1;">
+                <input matInput [(ngModel)]="q.options![j]" placeholder="選項內容">
+              </mat-form-field>
+              <button mat-icon-button (click)="deleteOption(q, j)">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+            }
+            <button mat-button (click)="addOption(q)" style="margin-top: 2vh; color: #D67C2F">
+              <mat-icon>add</mat-icon> 新增選項
+            </button>
+          </div>
+          }
+          <mat-divider style="margin-top: 3vh;"></mat-divider>
+        </div>
+        }
+      </div>
+
+
+      <br>
+      <div style="display: flex; gap: 1vw; justify-content: flex-end; margin-top: 1vh;">
+        <div style="display: flex; gap: 1vw;">
+          <button class="cancleBtn" (click)="toBasic()">上一步</button>
+          <button class="nextBtn" (click)="toPreview()">預覽</button>
+        </div>
+      </div>
+    </div>
+    }
+
+    @if (currentStep === 'preview') {
+    <div class="form preview-content">
+      <h2 style="text-align: center;">{{ basicForm.value.name }}</h2>
+      <p style="text-align: center; color: #666; margin-bottom: 20px;">
+        {{ basicForm.value.description }}
+      </p>
+      <mat-divider></mat-divider>
+
+      <div class="question-preview-list" style="margin-top: 20px;">
+        @for (q of questions; track q.id; let i = $index) {
+        <div class="preview-question-item" style="margin-bottom: 25px; padding: 10px; border-left: 3px solid #d5a972;">
+
+          <p style="font-weight: 600; font-size: 16px; color: #333;">
+            {{ i + 1 }}. {{ q.text }}
+            @if (q.required) {
+            <span style="color: red; margin-left: 5px;">*</span>
+            }
+          </p>
+
+          @if (q.type === 'single') {
+          @for (option of q.options; track $index) {
+          <mat-radio-button [disabled]="true" style="display: block; margin: 8px 0;">
+            {{ option }}
+          </mat-radio-button>
+          }
+          }
+          @else if (q.type === 'multiple') {
+          @for (option of q.options; track $index) {
+          <mat-checkbox [disabled]="true" style="display: block; margin: 8px 0;">
+            {{ option }}
+          </mat-checkbox>
+          }
+          }
+          @else if (q.type === 'short-answer') {
+          <mat-form-field appearance="outline" style="width: 100%;">
+            <input matInput placeholder="簡答..." [disabled]="true">
+          </mat-form-field>
+          }
+        </div>
+        }
+      </div>
+
+      <mat-divider style="margin: 20px 0;"></mat-divider>
+
+      <div style="display: flex; gap: 1vw; justify-content: flex-end;">
+        <div style="display: flex; gap: 1vw;">
+          <button class="cancleBtn" (click)="backToSettings()">返回設定</button>
+          <button class="nextBtn" (click)="submitSurvey()">確認並發佈</button>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
 </main>
 
 <nav class="navBar">
@@ -50,7 +221,7 @@
     <mat-icon aria-hidden="false" aria-label="logout icon" fontIcon="logout"></mat-icon>
   </button> -->
   <ul>
-    <li (click)="list()" style="--i:#FF9966;--j:#FF5E62">
+    <li (click)="toList()" style="--i:#FF9966;--j:#FF5E62">
       <span class="icon"> <mat-icon aria-hidden="false" aria-label="format_list_bulleted icon"
           fontIcon="format_list_bulleted"></mat-icon></span>
       <span class="title">問卷清單</span>

@@ -1,7 +1,7 @@
-import { ListItem } from './../@interfaces/list-item';
+import { ListItem, Survey, Question } from './../@interfaces/list-item';
 import { Injectable } from '@angular/core';
 import { ReviewDraft } from './../@interfaces/list-item';
-
+import { Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -210,6 +210,99 @@ export class QuestionnaireService {
   // 新增一個方法，用來根據 id 取得單一資料
   getQuestionnaireById(id: number): ListItem | undefined {
     return this.listData.find(item => item.id === id);
+  }
+
+  // 模擬列表資料 (包含題目的完整問卷資料)
+  private surveys: Survey[] = [
+    // 這裡可以放您的 ListItem 轉化為 Survey 的初始資料
+    // 但為簡化，我們先假設它從空開始，或只包含 ListItem
+  ];
+
+
+  // 獲取所有問卷的方法
+  getSurveys(): Survey[] {
+    return this.surveys;
+  }
+
+  // 新增問卷的方法
+  addSurvey(newSurvey: Survey): void {
+    this.surveys.push(newSurvey);
+
+    // 如果您想讓新問卷同時出現在 listData 中，也要加進去
+    const newListItem: ListItem = newSurvey;
+    this.listData.push(newListItem);
+
+    console.log('新問卷已儲存：', newSurvey);
+  }
+
+
+  // 獲取單個問卷的方法
+  getSurveyById(id: number): Observable<Survey | undefined> {
+    // 在實際應用中，這裡會是 HTTP 請求
+    const survey = this.surveys.find(s => s.id === id);
+    return of(survey); // 返回 Observable<Survey | undefined>
+  }
+
+  // 更新問卷的方法
+  updateSurvey(updatedSurvey: Survey): void {
+    const index = this.surveys.findIndex(s => s.id === updatedSurvey.id);
+    if (index > -1) {
+      // 更新完整問卷陣列
+      this.surveys[index] = updatedSurvey;
+
+      // 同步更新列表顯示資料 (listData)
+      const listIndex = this.listData.findIndex(item => item.id === updatedSurvey.id);
+      if (listIndex > -1) {
+        this.listData[listIndex] = updatedSurvey; // ListItem 屬性也被更新
+      }
+
+      console.log(`問卷 ID ${updatedSurvey.id} 已更新`);
+    } else {
+      console.error(`找不到問卷 ID ${updatedSurvey.id} 無法更新`);
+    }
+  }
+
+  // 輔助方法：根據日期計算問卷的狀態
+  private calculateStatus(startDateStr: string, endDateStr: string): string {
+    // 獲取今天的日期，並將時間部分設為午夜 (00:00:00) 以便於比較
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // 將問卷的日期字串轉換為 Date 物件
+    const startDate = new Date(startDateStr);
+    const endDate = new Date(endDateStr);
+
+    // 確保結束日期也設為午夜，便於比較
+    endDate.setHours(0, 0, 0, 0);
+
+    // 為了讓結束日當天仍然是「進行中」，我們將結束日期加一天後再比較
+    const dayAfterEndDate = new Date(endDate);
+    dayAfterEndDate.setDate(dayAfterEndDate.getDate() + 1);
+
+    if (today.getTime() < startDate.getTime()) {
+      return "尚未開始";
+    } else if (today.getTime() >= startDate.getTime() && today.getTime() < dayAfterEndDate.getTime()) {
+      // 今天的日期在開始日期（含）和結束日期的次日（不含）之間
+      return "進行中";
+    } else {
+      // 今天的日期 >= 結束日期的次日
+      return "已結束";
+    }
+  }
+
+  /**
+     * 獲取所有問卷列表數據，並計算最新的狀態
+     */
+  getSurveyListItems(): Observable<ListItem[]> {
+    // 在返回 listData 之前，動態更新每項的狀態
+    const updatedList = this.listData.map(item => {
+      const newStatus = this.calculateStatus(item.startDate, item.endDate);
+      return {
+        ...item,
+        status: newStatus // 用計算出的新狀態覆蓋舊狀態
+      };
+    });
+    return of(updatedList);
   }
 }
 

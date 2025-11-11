@@ -151,3 +151,69 @@ ul li:hover .title {
     transform: scale(0.9);
   }
 }
+
+/* 狀態列的容器 */
+.status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2vh; /* 步驟條和內容之間的間隔 */
+  width: 100%;
+}
+
+/* 每個步驟的樣式 */
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: default; /* 預設不允許點擊切換步驟 */
+  opacity: 0.5; /* 非活動步驟較暗 */
+  transition: opacity 0.3s;
+  min-width: 80px; /* 確保文字有足夠空間 */
+}
+
+/* 活動步驟的樣式 */
+.step.active {
+  opacity: 1;
+}
+
+/* 步驟數字圓圈 */
+.step-circle {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background-color: #ccc; /* 非活動顏色 */
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* 活動步驟的圓圈顏色 */
+.step.active .step-circle {
+  background-color: #d5a972; /* 您的主色調 */
+}
+
+/* 步驟文字 */
+.step-text {
+  margin-top: 5px;
+  font-size: 14px;
+  color: #333;
+  text-align: center;
+}
+
+/* 步驟分隔線 */
+.step-divider {
+  flex-grow: 1; /* 佔據步驟之間的空間 */
+  height: 2px;
+  background-color: #ccc; /* 預設顏色 */
+  margin: 0 10px;
+  transition: background-color 0.3s;
+}
+
+/* 完成步驟後的分隔線顏色 (當步驟1完成，正在步驟2時) */
+.step-divider.completed {
+  background-color: #d5a972; /* 您的主色調 */
+}

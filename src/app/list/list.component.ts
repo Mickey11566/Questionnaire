@@ -48,8 +48,11 @@ export class ListComponent {
 
   // 儲存當前頁面要顯示的資料 (用於表格顯示)
   pagedData: ListItem[] = [];
+  listData: ListItem[] = []; // 存放所有列表資料
 
   ngOnInit(): void {
+
+    this.loadData();
 
     // 確保在元件初始化時，filteredData 被正確設定
     this.allfilteredData = [...this.questionList.listData];
@@ -59,6 +62,21 @@ export class ListComponent {
     this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
     this.updatePagedData(); // 初始載入第一頁數據
 
+  }
+
+  loadData(): void {
+    // 呼叫 Service 的新方法，它會返回計算好最新狀態的資料
+    this.questionList.getSurveyListItems().subscribe(data => {
+      // 1. 儲存所有未篩選的最新數據
+      this.listData = data;
+
+      // 2. 將全體數據複製給篩選數據 (無篩選條件時，全部顯示)
+      this.allfilteredData = [...this.listData];
+
+      // 3. 處理可能存在的搜尋條件（如果用戶在導航回來前有輸入）
+      // 建議直接執行一次完整的 searchForm() 進行初始化篩選和分頁
+      this.searchForm();
+    });
   }
 
   // 計算要顯示的dataset
@@ -109,7 +127,7 @@ export class ListComponent {
 
   // 搜尋與篩選邏輯
   searchForm() {
-    let tempArray = this.questionList.listData;
+    let tempArray = [...this.listData];
 
     // 根據「問卷名稱」進行篩選 (如果 searchData 有值)
     if (this.searchData) {
@@ -163,5 +181,14 @@ export class ListComponent {
 
   logout() {
     this.router.navigateByUrl('login');
+  }
+
+  revise(surveyId: number): void {
+    // 假設您的編輯路由是 /survey/edit
+    this.router.navigate(['/survey/edit'], {
+      queryParams: {
+        id: surveyId
+      }
+    });
   }
 }

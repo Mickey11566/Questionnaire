@@ -187,6 +187,16 @@ export class ManageComponent {
     this.router.navigate(['/form', id]);
   }
 
+  // 修改表單
+  revise(surveyId: number): void {
+    // 假設您的編輯頁面路由是 '/survey/edit'
+    // 我們使用查詢參數 (queryParams) 來傳遞 ID
+    this.router.navigate(['/survey/edit'], {
+      queryParams: {
+        id: surveyId
+      }
+    });
+  }
 
   // 搜尋與篩選邏輯
   searchForm() {
