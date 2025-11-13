@@ -72,7 +72,7 @@
 
           <td class="action-cell">
             @if (item.status === "進行中" || item.status ==="已結束") {
-            <button class="fillout-button" (click)="filloutForm(item.id)">
+            <button class="fillout-button" (click)="checkout(item.id)">
               查看問卷
             </button>
             } @else {

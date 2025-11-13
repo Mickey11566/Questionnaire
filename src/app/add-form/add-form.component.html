@@ -1,7 +1,6 @@
 <main>
   <div class="formContainer"
-    style="width: 30%; height: fit-content; border: 2px solid #d5a972; border-radius: 5px; display: flex; flex-direction: column; justify-content: center; padding: 2vh 2vw;">
-
+    style="width: 30%; max-height: 90vh; border: 2px solid #d5a972; border-radius: 5px; display: flex; flex-direction: column; justify-content: center; padding: 2vh 2vw;">
     <div class="status-bar">
       <div class="step" [ngClass]="{'active': currentStep === 'basic'}">
         <span class="step-circle">1</span>
@@ -72,7 +71,8 @@
     }
     <!-- 設定問卷區塊 -->
     @if (currentStep === 'settings') {
-    <div class="form settings-content">
+    <div class="form settings-content"
+      style="overflow-x: hidden; overflow-y: hidden; max-height: calc(90vh - 100px); flex-grow: 1;">
       <h2>問卷題目設定</h2>
 
       <div class="add-question-buttons" style="display: flex; gap: 1vw; margin-bottom: 1vh;">
@@ -95,7 +95,7 @@
       </div>
       }
 
-      <div class="question-list" style="margin-top: 2vh;">
+      <div class="question-list">
         @for (q of questions; track q.id; let i = $index) {
         <div class="question-card">
           <div class="question-header">

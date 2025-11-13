@@ -157,7 +157,8 @@ ul li:hover .title {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 2vh; /* 步驟條和內容之間的間隔 */
+  margin-bottom: 2vh;
+  /* 步驟條和內容之間的間隔 */
   width: 100%;
 }
 
@@ -166,10 +167,13 @@ ul li:hover .title {
   display: flex;
   flex-direction: column;
   align-items: center;
-  cursor: default; /* 預設不允許點擊切換步驟 */
-  opacity: 0.5; /* 非活動步驟較暗 */
+  cursor: default;
+  /* 預設不允許點擊切換步驟 */
+  opacity: 0.5;
+  /* 非活動步驟較暗 */
   transition: opacity 0.3s;
-  min-width: 80px; /* 確保文字有足夠空間 */
+  min-width: 80px;
+  /* 確保文字有足夠空間 */
 }
 
 /* 活動步驟的樣式 */
@@ -182,7 +186,8 @@ ul li:hover .title {
   width: 25px;
   height: 25px;
   border-radius: 50%;
-  background-color: #ccc; /* 非活動顏色 */
+  background-color: #ccc;
+  /* 非活動顏色 */
   color: white;
   display: flex;
   justify-content: center;
@@ -193,7 +198,8 @@ ul li:hover .title {
 
 /* 活動步驟的圓圈顏色 */
 .step.active .step-circle {
-  background-color: #d5a972; /* 您的主色調 */
+  background-color: #d5a972;
+  /* 您的主色調 */
 }
 
 /* 步驟文字 */
@@ -206,14 +212,57 @@ ul li:hover .title {
 
 /* 步驟分隔線 */
 .step-divider {
-  flex-grow: 1; /* 佔據步驟之間的空間 */
+  flex-grow: 1;
+  /* 佔據步驟之間的空間 */
   height: 2px;
-  background-color: #ccc; /* 預設顏色 */
+  background-color: #ccc;
+  /* 預設顏色 */
   margin: 0 10px;
   transition: background-color 0.3s;
 }
 
 /* 完成步驟後的分隔線顏色 (當步驟1完成，正在步驟2時) */
 .step-divider.completed {
-  background-color: #d5a972; /* 您的主色調 */
+  background-color: #d5a972;
+  /* 您的主色調 */
+}
+
+.question-list {
+  margin-top: 2vh;
+  padding: 0 1vw;
+  /* 確保這兩個屬性存在，才能啟用捲軸 */
+  max-height: 50vh;
+  /* 依照你的實際需求調整 */
+  overflow-y: auto;
+}
+
+/* ------------------------------------------- */
+/* 2. Webkit 捲軸主體樣式 (Chrome, Safari, Edge) */
+/* ------------------------------------------- */
+
+/* 設定整個捲軸的寬度/高度 */
+.question-list::-webkit-scrollbar {
+  width: 8px;
+  /* 垂直捲軸的寬度 */
+}
+
+/* 捲軸的背景軌道 */
+.question-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  /* 軌道顏色淺灰 */
+  border-radius: 10px;
+}
+
+/* 捲軸的可拖曳部分 (Thumb) */
+.question-list::-webkit-scrollbar-thumb {
+  background-color: #d5a972;
+  /* 捲軸顏色，使用你的主題色 */
+  border-radius: 10px;
+  /* 圓角 */
+}
+
+/* 捲軸在滑鼠懸停時的樣式 */
+.question-list::-webkit-scrollbar-thumb:hover {
+  background-color: #b88d5e;
+  /* 懸停時顏色稍深 */
 }

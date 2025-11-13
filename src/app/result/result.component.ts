@@ -28,29 +28,31 @@ export class ResultComponent {
 
   constructor(private router: Router) { }
 
+  ngOnInit(): void {
 
-  openChart() {
     // 獲取 canvas 元素
     let ctx = document.getElementById('chart') as HTMLCanvasElement;
 
     // 設定數據
     let data = {
       // x 軸文字
-      labels: ['餐費', '交通費', '租金'],
+      labels: ['非常滿意', '滿意', '不滿意', '非常不滿意'],
       datasets: [
         {
           // 上方分類文字
-          label: '支出比',
+          label: '資料筆數',
           // 數據
-          data: [12000, 3000, 9000],
+          data: [12000, 3000, 9000, 2000],
           // 線與邊框顏色
           backgroundColor: [
             'rgb(255, 99, 132)',
             'rgb(54, 162, 235)',
             'rgb(255, 205, 86)',
+            'rgba(7, 88, 249, 1)',
+
           ],
           //設定hover時的偏移量，滑鼠移上去表會偏移，方便觀看選種的項目
-          hoverOffset: 40,
+          hoverOffset: 20,
         },
       ],
     };
@@ -60,10 +62,14 @@ export class ResultComponent {
       //pie是圓餅圖,doughnut是環狀圖
       type: 'pie',
       data: data,
+
     });
 
-    chart.resize(500, 300);
+    // chart.resize(700, 500);
+
   }
+
+
 
   checkList() {
     this.router.navigateByUrl('manage');

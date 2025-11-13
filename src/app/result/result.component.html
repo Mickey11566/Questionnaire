@@ -1,22 +1,26 @@
 <main>
-  <div class="formAnswer">
-    <mat-accordion>
-      <mat-expansion-panel (click)="openChart()" (opened)="panelOpenState.set(true)"
-        (closed)="panelOpenState.set(false)">
-        <mat-expansion-panel-header>
-          <mat-panel-title> 查看答案 </mat-panel-title>
-          <mat-panel-description>
-            點擊{{panelOpenState() ? '關閉' : '查看'}}答案
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        @for(num of times; track num) {
-        <p>第{{num}}個回答</p>
-        }
-        <div>
-          <canvas id="chart"></canvas>
-        </div>
-      </mat-expansion-panel>
-    </mat-accordion>
+
+  <h2>測試表單</h2>
+  <p>這是測試表單這是測試表單這是測試表單這是測試表單這是測試表單這是測試表單</p>
+  <div class="resultContainer">
+    <div>
+      <canvas id="chart"></canvas>
+    </div>
+    <div class="formAnswer">
+      <mat-accordion style="width: 300px">
+        <mat-expansion-panel (opened)="panelOpenState.set(true)" (closed)="panelOpenState.set(false)">
+          <mat-expansion-panel-header>
+            <mat-panel-title> 查看答案 </mat-panel-title>
+            <mat-panel-description>
+              點擊{{panelOpenState() ? '關閉' : '查看'}}答案
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          @for(num of times; track num) {
+          <p>第{{num}}個回答</p>
+          }
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
   </div>
 </main>
 

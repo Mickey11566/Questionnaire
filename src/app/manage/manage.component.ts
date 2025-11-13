@@ -181,8 +181,8 @@ export class ManageComponent {
     return Array(this.totalPages).fill(0).map((x, i) => i + 1);
   }
 
-  //填寫表單
-  filloutForm(id: number) {
+  //查看表單
+  checkout(id: number) {
     // this.questionList.name = this.userData.name;
     this.router.navigate(['/form', id]);
   }

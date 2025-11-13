@@ -1,6 +1,21 @@
 main {
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
+}
+
+.resultContainer {
+  width: fit-content;
+  height: fit-content;
+  padding: 1vw;
+  display: flex;
+  align-items: flex-start;
+  border-radius: 5px;
+  border: 1px solid black;
 }
 
 .formAnswer {
