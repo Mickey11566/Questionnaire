@@ -18,6 +18,8 @@ main {
   border-radius: 0.4vw;
   margin: 1vh 0;
   position: relative;
+  background-color: rgba(255, 255, 255, 0.3);
+  border: 1px solid black;
 }
 
 .searchContent {
@@ -97,13 +99,14 @@ input[type=date] {
   border: 1px solid #d5a972;
   font-weight: 500;
   padding: 1vh 1vw;
+  background-color: #f9f9f9;
 }
 
 
 /* 斑馬紋效果 (使用 highlight-row class) */
-.data-table tbody tr:nth-child(odd) {
-  background-color: #f9f9f9;
-}
+// .data-table tbody tr:nth-child(odd) {
+//   background-color: #f9f9f9;
+// }
 
 button {
   // background-color: #D67C2F;
@@ -232,7 +235,7 @@ ul li:hover .title {
 
 /* 偶數行高亮樣式 (從您的 [class.highlight-row] 來的) */
 .highlight-row {
-  background-color: #f7f7f7;
+  // background-color: #f7f7f7;
   /* 輕微的灰色背景 */
 }
 

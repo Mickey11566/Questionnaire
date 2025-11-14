@@ -35,7 +35,7 @@
       <thead>
         <tr>
           <th>選擇</th>
-          <th>編號</th>
+          <!-- <th>編號</th> -->
           <th>名稱</th>
           <th class="status-col">狀態</th>
           <th>開始日期</th>
@@ -51,7 +51,7 @@
             <input type="checkbox" [checked]="selectedItemIds.has(item.id)"
               (change)="onCheckboxChange(item.id, $event)">
           </td>
-          <td>{{ item.id }}</td>
+          <!-- <td>{{ item.id }}</td> -->
           <td>{{ item.name }}</td>
 
           <td class="status-cell" [ngClass]="{

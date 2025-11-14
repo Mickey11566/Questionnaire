@@ -28,7 +28,7 @@
   <table class="data-table" id="myTable">
     <thead>
       <tr>
-        <th>編號</th>
+        <!-- <th>編號</th> -->
         <th>名稱</th>
         <th class="status-col">狀態</th>
         <th>開始日期</th>
@@ -39,7 +39,7 @@
     <tbody>
       @for (item of pagedData; track item.id; let i = $index) {
       <tr [class.highlight-row]="i % 2 === 0">
-        <td>{{ item.id }}</td>
+        <!-- <td>{{ item.id }}</td> -->
         <td>{{ item.name }}</td>
 
         <td class="status-cell" [ngClass]="{
