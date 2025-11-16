@@ -1,44 +1,60 @@
-@if (reviewData && questionnaireBasicInfo) {
 <div class="formHeader">
+  @if (surveyReviewData) {
   <div class="formDate">
-    <h3>
-      可填寫時間： {{questionnaireBasicInfo.startDate}} 至 {{questionnaireBasicInfo.endDate}}
-    </h3>
+    <h3>問卷期間： {{surveyReviewData.startDate}} 至 {{surveyReviewData.endDate}}</h3>
   </div>
   <div class="formTitle">
-    <h1>{{questionnaireBasicInfo.name}}</h1>
+    <h1>{{surveyReviewData.name}} - 預覽</h1>
   </div>
   <div class="formDescription">
-    {{questionnaireBasicInfo.description}}
+    {{surveyReviewData.description}}
   </div>
+  } @else {
+  <p>正在載入預覽資料...</p>
+  }
 </div>
 
 <div class="formContent">
+  <h2>您的回答：</h2>
 
-  <div class="formUser">
-    <p>姓名： <strong>{{reviewData.answers['inputName'] || '未填寫'}}</strong></p>
-    <p>年齡： <strong>{{reviewData.answers['inputAge'] || '未填寫'}}</strong></p>
+  @if (reviewQuestions.length > 0) {
+  <div class="review-question-list">
+
+    @for (item of reviewQuestions; track item.id; let i = $index) {
+    <div class="review-item">
+      <h4>
+        Q{{i + 1}}. {{item.text}}
+        @if (item.required) {
+        <span style="color: red;">(必填)</span>
+        }
+      </h4>
+
+      <div class="user-answer-box">
+        <p><strong>您的選擇：</strong></p>
+        <p class="answer-text">{{ item.userAnswerText }}</p>
+
+        @if (item.type === 'single' || item.type === 'multiple') {
+        <div class="options-hint">
+          @for (option of item.options; track option) {
+          @if (item.userAnswerText.includes(option)) {
+          <span class="selected-option">{{ option }}</span>
+          } @else {
+          <span class="unselected-option">{{ option }}</span>
+          }
+          }
+        </div>
+        }
+      </div>
+    </div>
+    }
   </div>
+  } @else {
+  <p>此問卷沒有問題或未取得您的回答。</p>
+  }
 
-  <hr>
-
-  <div class="formOptionA">
-    <legend>選擇一個最喜歡吃的水果（必填）：</legend>
-    <strong>{{ reviewData.answers['fruitOption'] || '未選擇' }}</strong>
-  </div>
-
-  <div class="formOptionB">
-    <legend>請說明理由：</legend>
-    <p style="white-space: pre-wrap;">{{ reviewData.answers['inputContent'] || '未填寫理由' }}</p>
-  </div>
-
-  <hr>
 
   <div class="formButton">
-    <button class="cancleBtn" (click)="goBack()">返回修改</button>
-    <button class="submitBtn" (click)="submitForm()">確認送出</button>
+    <button class="cancleBtn" (click)="goBack()">修改</button>
+    <button class="submitBtn" (click)="submitForm()">確認並提交</button>
   </div>
 </div>
-} @else {
-<p>沒有預覽資料，請先填寫表單。</p>
-}

@@ -1,7 +1,7 @@
-import { ListItem, Survey, Question } from './../@interfaces/list-item';
+import { ListItem, Survey, Question, FormResponse } from './../@interfaces/list-item';
 import { Injectable } from '@angular/core';
 import { ReviewDraft } from './../@interfaces/list-item';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -22,21 +22,35 @@ export class QuestionnaireService {
   inputAge!: number; //填寫的年紀
   inputContent!: string; //填寫的原因
 
+  // 使用 BehaviorSubject 來儲存和廣播問卷資料
+  private currentSurveySubject = new BehaviorSubject<Survey | null>(null);
   private currentFormDraft: ReviewDraft | null = null;
+
+  // 用來暫存用戶在填寫頁面的回答
+  private currentResponse: FormResponse | undefined;
+
+  // 填寫表單元件將訂閱這個 Observable 來接收資料
+  currentSurvey$: Observable<Survey | null> = this.currentSurveySubject.asObservable();
 
   constructor() { }
 
   ngOnInit(): void {
-    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-    //Add 'implements OnInit' to the class.
     this.updateItemStatuses();
   }
 
+  // 取得今日日期並格式化成當地時區
   getTodayDateOnly(): Date {
     const today = new Date();
     // 建立一個新的 Date 物件，只包含年、月、日，並將時間設定為 UTC 午夜
     // 這樣可以避免時區問題，確保 '2025-11-06' 在任何時區都被視為同一天。
     return new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()));
+  }
+
+  // 儲存問卷資料的方法 (從設定元件呼叫)
+  setSurveyData(survey: Survey) {
+    this.currentSurveySubject.next(survey);
+    // 實際應用中，你應該在這裡呼叫 API 將資料儲存到後端
+    console.log('問卷資料已儲存到 Service/後端:', survey);
   }
 
   /**
@@ -69,78 +83,6 @@ export class QuestionnaireService {
   }
 
   listData: ListItem[] = [
-    {
-      id: 1,
-      name: '工作滿意度調查',
-      description: "工作的意義在於實現自我價值。如何在壓力與成就之間取得平衡，是每個人都需要思考的問題。",
-      status: "進行中",
-      startDate: "2025-11-01",
-      endDate: "2025-11-15",
-    },
-    {
-      id: 2,
-      name: '公司環境與文化問卷',
-      description: "良好的工作環境能激發員工的潛力。那麼，公司文化與氛圍的營造，究竟該如何影響員工滿意度呢？",
-      status: "尚未開始",
-      startDate: "2025-11-20",
-      endDate: "2025-12-05",
-    },
-    {
-      id: 3,
-      name: '員工健康與壓力調查',
-      description: "健康是一切的基礎。當壓力成為日常的一部分，我們該如何維持心理與身體的平衡？",
-      status: "進行中",
-      startDate: "2025-11-03",
-      endDate: "2025-11-20",
-    },
-    {
-      id: 4,
-      name: '遠端工作經驗問卷',
-      description: "隨著科技發展，遠端工作已成常態。你對遠端工作的效率與挑戰有何看法？",
-      status: "尚未開始",
-      startDate: "2025-12-01",
-      endDate: "2025-12-15",
-    },
-    {
-      id: 5,
-      name: '年度培訓成效評估',
-      description: "學習與成長是企業發展的核心。培訓是否真的讓你有所收穫？",
-      status: "已結束",
-      startDate: "2025-10-01",
-      endDate: "2025-10-10",
-    },
-    {
-      id: 6,
-      name: '部門合作滿意度調查',
-      description: "團隊合作是成功的基礎。你認為跨部門溝通是否順暢？",
-      status: "進行中",
-      startDate: "2025-11-05",
-      endDate: "2025-11-18",
-    },
-    {
-      id: 7,
-      name: '工作與生活平衡問卷',
-      description: "當生活節奏越來越快，如何在工作與家庭之間取得平衡，成為許多人心中的課題。",
-      status: "尚未開始",
-      startDate: "2025-11-25",
-      endDate: "2025-12-05",
-    },
-    {
-      id: 8,
-      name: '內部溝通效率調查',
-      description: "有效的溝通能提升團隊的凝聚力。你認為目前的資訊流通是否足夠透明？",
-      status: "進行中",
-      startDate: "2025-11-02",
-      endDate: "2025-11-17",
-    },
-    {
-      id: 9,
-      name: '新進員工適應情況問卷',
-      description: "對新員工而言，入職初期的體驗非常關鍵。你是否覺得公司的培訓與輔導足夠完善？",
-      status: "已結束",
-      startDate: "2025-09-15",
-      endDate: "2025-09-30",
-    },
     {
       id: 10,
       name: '主管領導風格評估',
@@ -191,6 +133,112 @@ export class QuestionnaireService {
     }
   ];
 
+  private fullSurveyData: Survey[] = [
+    {
+      id: 10,
+      name: '主管領導風格評估',
+      description: "領導風格影響團隊氛圍與績效。你認為主管在激勵與指導上表現如何？",
+      status: "進行中",
+      startDate: "2025-11-01",
+      endDate: "2025-11-12",
+      questions: [
+        { id: 1, text: '您認為主管的溝通方式是否清楚明確？', type: 'single', required: true, options: ['非常清楚', '清楚', '普通', '不清楚', '非常不清楚'] },
+        { id: 2, text: '主管在激勵團隊方面的表現如何？', type: 'single', required: true, options: ['非常好', '良好', '普通', '稍弱', '很差'] },
+        { id: 3, text: '您覺得主管在以下哪些方面表現較佳？ (可複選)', type: 'multiple', required: false, options: ['目標設定', '團隊激勵', '提供資源', '協助決策', '衝突管理'] },
+        { id: 4, text: '請分享您認為主管可以改進的地方。', type: 'short-answer', required: false }
+      ]
+    },
+
+    {
+      id: 11,
+      name: '顧客服務品質調查',
+      description: "顧客滿意是品牌成功的關鍵。你認為我們的服務流程是否友善且高效？",
+      status: "尚未開始",
+      startDate: "2025-12-10",
+      endDate: "2025-12-25",
+      questions: [
+        { id: 5, text: '您認為客服人員的態度是否友善？', type: 'single', required: true, options: ['非常友善', '友善', '普通', '不太友善', '不友善'] },
+        { id: 6, text: '在服務過程中，您是否感到流程順暢？', type: 'single', required: true, options: ['非常順暢', '順暢', '普通', '不順暢'] },
+        { id: 7, text: '您希望客服流程未來能加強哪些部分？ (可複選)', type: 'multiple', required: false, options: ['回應速度', '問題解決效率', '服務態度', '知識專業度'] },
+        { id: 8, text: '請描述一次讓您印象深刻的客服體驗。', type: 'short-answer', required: false }
+      ]
+    },
+
+    {
+      id: 12,
+      name: '產品滿意度調查',
+      description: "產品品質與使用體驗密不可分。你的使用感受是否符合預期？",
+      status: "已結束",
+      startDate: "2025-10-10",
+      endDate: "2025-10-20",
+      questions: [
+        { id: 9, text: '您對產品的整體品質感到滿意嗎？', type: 'single', required: true, options: ['非常滿意', '滿意', '普通', '不滿意', '非常不滿意'] },
+        { id: 10, text: '產品是否符合您購買前的預期？', type: 'single', required: true, options: ['完全符合', '大致符合', '普通', '不太符合', '完全不符合'] },
+        { id: 11, text: '您認為產品有哪些方面可再加強？ (可複選)', type: 'multiple', required: false, options: ['外觀設計', '使用便利性', '耐用度', '功能完整度', '售後服務'] },
+        { id: 12, text: '請描述您使用產品的實際感受。', type: 'short-answer', required: false }
+      ]
+    },
+
+    {
+      id: 13,
+      name: '年度活動回饋問卷',
+      description: "每一次活動的舉辦，都是團隊努力的成果。你的參與體驗如何？",
+      status: "已結束",
+      startDate: "2025-09-20",
+      endDate: "2025-09-30",
+      questions: [
+        { id: 13, text: '您對此次活動的整體滿意度如何？', type: 'single', required: true, options: ['非常滿意', '滿意', '普通', '不滿意'] },
+        { id: 14, text: '您覺得活動流程安排是否順暢？', type: 'single', required: true, options: ['非常順暢', '順暢', '普通', '不順暢'] },
+        { id: 15, text: '本次活動中，您最喜歡哪些部分？ (可複選)', type: 'multiple', required: false, options: ['場地', '講者/節目內容', '互動環節', '活動禮品', '餐飲'] },
+        { id: 16, text: '請提供對活動的任何建議或回饋。', type: 'short-answer', required: false }
+      ]
+    },
+
+    {
+      id: 14,
+      name: '福利制度滿意度調查',
+      description: "福利制度不僅反映企業文化，也影響員工忠誠度。你對現行制度的滿意度如何？",
+      status: "進行中",
+      startDate: "2025-11-04",
+      endDate: "2025-11-18",
+      questions: [
+        { id: 17, text: '您對目前的休假制度感到滿意嗎？', type: 'single', required: true, options: ['滿意', '尚可', '不滿意'] },
+        { id: 18, text: '公司提供的保險福利是否符合您的需求？', type: 'single', required: true, options: ['是', '否', '不確定'] },
+        { id: 19, text: '您希望未來加強哪些福利項目？ (可複選)', type: 'multiple', required: false, options: ['彈性工時', '員工旅遊', '進修補助', '健康檢查', '育兒補助'] },
+        { id: 20, text: '請為現行福利制度提供具體建議。', type: 'short-answer', required: false }
+      ]
+    },
+
+    {
+      id: 15,
+      name: '公司整體滿意度調查',
+      description: "公司整體的發展與員工感受息息相關。你的滿意度能幫助我們持續改善。",
+      status: "尚未開始",
+      startDate: "2025-11-25",
+      endDate: "2025-12-05",
+      questions: [
+        { id: 21, text: '您對公司的整體工作環境滿意嗎？', type: 'single', required: true, options: ['非常滿意', '滿意', '普通', '不滿意'] },
+        { id: 22, text: '您認為公司內部的溝通是否順暢？', type: 'single', required: true, options: ['非常順暢', '順暢', '普通', '不順暢'] },
+        { id: 23, text: '您覺得公司有哪些方面值得加強？ (可複選)', type: 'multiple', required: false, options: ['人力規劃', '溝通透明度', '員工培訓', '升遷制度', '團隊合作'] },
+        { id: 24, text: '請給予公司整體的任何建議或回饋。', type: 'short-answer', required: false }
+      ]
+    }
+  ];
+
+  // 儲存用戶的回答 (在 Form Component 中調用)
+  saveCurrentResponse(response: FormResponse): void {
+    this.currentResponse = response;
+  }
+
+  // 取得用戶的回答 (在 Review Component 中調用)
+  getCurrentResponse(): FormResponse | undefined {
+    return this.currentResponse;
+  }
+
+  // 清除暫存回答 (在提交或返回列表後調用)
+  clearCurrentResponse(): void {
+    this.currentResponse = undefined;
+  }
 
   // 設定預覽草稿
   setDraftData(data: ReviewDraft): void {
@@ -208,8 +256,9 @@ export class QuestionnaireService {
   }
 
   // 新增一個方法，用來根據 id 取得單一資料
-  getQuestionnaireById(id: number): ListItem | undefined {
-    return this.listData.find(item => item.id === id);
+  getFullSurveyById(id: number): Survey | undefined {
+    // 從包含完整問題的 private fullSurveyData 陣列中尋找
+    return this.fullSurveyData.find(survey => survey.id === id);
   }
 
   // 模擬列表資料 (包含題目的完整問卷資料)

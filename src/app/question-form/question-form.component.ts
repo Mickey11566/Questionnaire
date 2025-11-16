@@ -1,8 +1,8 @@
-import { ListItem, ReviewDraft } from './../@interfaces/list-item';
+import { CurrentFormData, ListItem, ReviewDraft, Survey } from './../@interfaces/list-item';
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { QuestionnaireService } from '../@services/questionnaire.service';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
 import { ReviewComponent } from '../review/review.component';
 
 
@@ -13,6 +13,12 @@ import { ReviewComponent } from '../review/review.component';
   styleUrl: './question-form.component.scss'
 })
 export class QuestionFormComponent {
+
+  // 存放從 Service 載入的問卷資料型態
+  surveyData: Survey | null = null;
+
+  // 用於收集使用者答案的頂層 FormGroup
+  surveyForm!: FormGroup;
 
   inputName!: string;
   inputAge!: number;
@@ -27,13 +33,29 @@ export class QuestionFormComponent {
   // 用於收集動態答案的物件
   formAnswers: Record<string, any> = {};
 
+  private fullSurveyData: Survey[] = [/* ... 您的 fullSurveyData 陣列內容 ... */];
+
   currentFormData: any | undefined; // 用來儲存當前表單要顯示的資料
 
-  constructor(private route: ActivatedRoute, private router: Router, private questionnaireService: QuestionnaireService) { }
+  constructor(private fb: FormBuilder, private route: ActivatedRoute, private router: Router, private questionnaireService: QuestionnaireService) { }
 
   ngOnInit(): void {
 
     const draft = this.questionnaireService.getDraftData();
+
+    // 1. 取得路由中的 ID
+    this.route.params.subscribe(params => {
+      const surveyId = +params['id']; // 將路由參數（字串）轉換為數字
+
+      // 2. 呼叫合併資料的方法
+      this.currentFormData = this.getCombinedSurveyData(surveyId);
+
+      if (!this.currentFormData) {
+        console.error('找不到對應的問卷資料！ID:', surveyId);
+        // 處理找不到資料的情況，例如導回列表頁
+      }
+    });
+
 
     if (draft && draft.answers) {
       console.log("發現草稿，正在回填數據...");
@@ -44,13 +66,9 @@ export class QuestionFormComponent {
       this.fruitOption = draft.answers['fruitOption'] || 'apple';
       this.inputContent = draft.answers['inputContent'] || '';
 
-
-      // 由於您在 HTML 中需要 name, description, startDate, endDate
-      // 如果 Service 中的 draft 裡沒有這些資訊，您需要在 Service 載入它們。
-      // 這裡我們假設它們依然可以通過 surveyId 獲取（如果 draft 中沒有 name/description 的話）
       if (draft.surveyId) {
         const idNumber = draft.surveyId;
-        this.currentFormData = this.questionnaireService.getQuestionnaireById(idNumber);
+        this.currentFormData = this.questionnaireService.getFullSurveyById(idNumber);
       }
 
     } else {
@@ -61,9 +79,10 @@ export class QuestionFormComponent {
         const formId = params.get('id');
         if (formId) {
           const idNumber = +formId;
-          this.currentFormData = this.questionnaireService.getQuestionnaireById(idNumber);
+          this.currentFormData = this.questionnaireService.getFullSurveyById(idNumber);
         }
       });
+
     }
 
     this.route.paramMap.subscribe(params => {
@@ -73,15 +92,32 @@ export class QuestionFormComponent {
         const idNumber = +formId; // 將字串轉換為數字
 
         // 從 Service 獲取問卷的基本資訊
-        this.questionnaireInfo = this.questionnaireService.getQuestionnaireById(idNumber);
+        this.questionnaireInfo = this.questionnaireService.getFullSurveyById(idNumber);
 
         // 透過 Service 的方法根據 ID 取得資料
-        this.currentFormData = this.questionnaireService.getQuestionnaireById(idNumber);
+        this.currentFormData = this.questionnaireService.getFullSurveyById(idNumber);
       }
     });
   }
 
-  // 在透過review.ts 去拆解json
+  getCombinedSurveyData(id: number): CurrentFormData | undefined {
+    // 從 fullSurveyData 找到包含 questions 的完整資料
+    const fullData = this.fullSurveyData.find(survey => survey.id === id);
+
+    if (fullData) {
+      // 提取 questions 以外的 ListItem 屬性
+      const { questions, ...listItem } = fullData;
+
+      // 合併並返回結果
+      return {
+        ...listItem, // 包含 id, name, description, status, startDate, endDate
+        questions: questions // 包含問題陣列
+      };
+    }
+
+    return undefined; // 找不到對應 ID 的資料
+  }
+
   previewForm() {
     if (!this.questionnaireInfo) {
       console.error('未找到問卷基本資訊');
@@ -94,8 +130,6 @@ export class QuestionFormComponent {
       'inputAge': this.inputAge,
       'fruitOption': this.fruitOption,
       'inputContent': this.inputContent,
-      // 如果未來有其他問題，例如 ID 為 'q5' 的問題：
-      // 'q5': this.q5Answer,
     };
 
     // 2. 組成 ReviewDraft 物件

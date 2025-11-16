@@ -36,33 +36,44 @@ export class MemberDashboardComponent {
 
   constructor(private router: Router) { }
 
-
-  // 用sweetAlert製作動畫
-  // https://sweetalert2.github.io/#handling-buttons
   Submit() {
-    Swal.fire({
-      title: "是否真的要修改個人資訊?",
-      icon: "warning",
-      showConfirmButton: true,
-      showCancelButton: true,
-      position: "center",
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "確定",
-      cancelButtonText: "取消",
-    }).then((res) => {
-      if (res.isConfirmed) {
-        Swal.fire({
-          title: "修改成功!",
-          icon: "success",
-          timer: 1500,
-          showConfirmButton: false
-        });
-        setTimeout(() => {
-          this.router.navigateByUrl("list");
-        }, 1500);
-      }
-    });
+    if (
+      this.userPassword &&
+      this.userName &&
+      this.userPhone) {
+      Swal.fire({
+        title: "是否真的要修改個人資訊?",
+        icon: "warning",
+        showConfirmButton: true,
+        showCancelButton: true,
+        position: "center",
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "確定",
+        cancelButtonText: "取消",
+      }).then((res) => {
+        if (res.isConfirmed) {
+          Swal.fire({
+            title: "修改成功!",
+            icon: "success",
+            timer: 1500,
+            showConfirmButton: false
+          });
+          setTimeout(() => {
+            this.router.navigateByUrl("list");
+          }, 1500);
+        }
+      })
+    }
+    else {
+      Swal.fire({
+        title: "修改失敗！",
+        text: "請輸入必填的內容",
+        icon: "error",
+        timer: 1500,
+        showConfirmButton: false
+      });
+    };
   }
   goBack() {
     this.router.navigateByUrl("list");

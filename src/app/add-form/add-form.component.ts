@@ -15,7 +15,7 @@ import { MatButtonModule } from '@angular/material/button'; // <-- 新增
 import { MatSelectModule } from '@angular/material/select'; // <-- 新增
 import { MatCheckboxModule } from '@angular/material/checkbox'; // <-- 新增
 import { MatDividerModule } from '@angular/material/divider'; // <-- 新增
-import { Question, QuestionType, Survey } from '../@interfaces/list-item';
+import { Question, Survey } from '../@interfaces/list-item';
 
 
 // sweetalert
@@ -183,7 +183,7 @@ export class AddFormComponent {
 
   // --- 題目操作方法 (與前次提供的一致) ---
 
-  addQuestion(type: QuestionType): void {
+  addQuestion(type: any): void {
     const newQuestion: Question = {
       id: this.nextQuestionId++,
       text: `新問題 ${this.nextQuestionId - 1}`,

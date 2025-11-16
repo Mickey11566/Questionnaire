@@ -9,6 +9,7 @@ import { MemberDashboardComponent } from './member-dashboard/member-dashboard.co
 import { AdminComponent } from './admin/admin.component';
 import { ManageComponent } from './manage/manage.component';
 import { AddFormComponent } from './add-form/add-form.component';
+import { CheckFormComponent } from './check-form/check-form.component';
 
 export const routes: Routes = [
   {
@@ -47,6 +48,9 @@ export const routes: Routes = [
   },
   {
     path: "addForm", component: AddFormComponent
+  },
+  {
+    path: "checkForm/:id", component: CheckFormComponent
   },
   // 修改問卷 (使用相同的元件，並可以接收 ID 查詢參數)
   { path: 'survey/edit', component: AddFormComponent },

@@ -11,46 +11,61 @@
 </div>
 
 <div class="formContent">
-  <div class="formUser">
-    <p>姓名<input [(ngModel)]="inputName" type="text"></p>
-    <p>年齡<input [(ngModel)]="inputAge" type="text"></p>
 
-  </div>
+  @if (currentFormData?.questions) {
+  <div class="question-list">
 
-  <div class="formOptionA">
-    <fieldset style="display: flex; flex-direction: column; gap: 1vw;">
-      <legend>選擇一個最喜歡吃的水果（必填）：</legend>
+    @for (question of currentFormData.questions; track question.id; let i = $index) {
+    <div class="question-item" style="
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1vh;">
+      <h3>
+        Q{{i + 1}}. {{question.text}}
+        @if (question.required) {
+        <span style="color: red;">*</span>
+        }
+      </h3>
 
-      <div>
-        <input type="radio" [(ngModel)]="fruitOption" name="fruit" value="apple" checked />
-        <label for="apple">蘋果</label>
+      @switch (question.type) {
+
+      @case ('single') {
+      @for (option of question.options; track option) {
+      <div class="option">
+        <input type="radio" [id]="'q' + question.id + 'opt' + option" [name]="'q' + question.id" [value]="option">
+        <label [for]="'q' + question.id + 'opt' + option">{{option}}</label>
       </div>
+      }
+      }
 
-      <div>
-        <input type="radio" [(ngModel)]="fruitOption" name="fruit" value="banana" />
-        <label for="banana">香蕉</label>
+      @case ('multiple') {
+      @for (option of question.options; track option) {
+      <div class="option">
+        <input type="checkbox" [id]="'q' + question.id + 'opt' + option" [name]="'q' + question.id" [value]="option">
+        <label [for]="'q' + question.id + 'opt' + option">{{option}}</label>
       </div>
+      }
+      }
 
-      <div>
-        <input type="radio" [(ngModel)]="fruitOption" name="fruit" value="grape" />
-        <label for="grape">葡萄</label>
-      </div>
-    </fieldset>
-  </div>
+      @case ('short-answer') {
+      <textarea style="resize: none; border-radius: 4px; font-size: 1rem; font-weight: 700;" rows="4" cols="30"
+        maxlength="100" placeholder="請在此輸入您的回答..."></textarea>
+      }
 
-  <div class="formOptionB">
-    <fieldset>
-      <legend>請說明理由：</legend>
-      <textarea style="
-        padding: 10px;
-        max-width: 100%;
-        line-height: 1.5;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-        box-shadow: 1px 1px 1px #999;" name="reason" row="5" cols="40" placeholder="50字以內" maxlength="50"
-        [(ngModel)]="inputContent"></textarea>
-    </fieldset>
+      @default {
+      <p>無法識別的問題類型。</p>
+      }
+      }
+    </div>
+    }
+    @empty {
+    <p>此問卷目前沒有任何問題。</p>
+    }
   </div>
+  } @else {
+  <p>正在載入問卷資料...</p>
+  }
 
 
   <div class="formButton">

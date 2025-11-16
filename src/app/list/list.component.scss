@@ -249,9 +249,10 @@ ul li:hover .title {
 
 /* 進行中 (您原本的樣式) */
 .status-inprogress {
-  color: #ffa640;
+  color: #f7831d;
+  font-weight: 700;
   /* 亮橙色 */
-  text-shadow: 1px 1px #000000;
+  text-shadow: 1px 1px #222222;
 }
 
 /* 已結束 */

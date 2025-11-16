@@ -184,7 +184,7 @@ export class ManageComponent {
   //查看表單
   checkout(id: number) {
     // this.questionList.name = this.userData.name;
-    this.router.navigate(['/form', id]);
+    this.router.navigate(['/checkForm', id]);
   }
 
   // 修改表單

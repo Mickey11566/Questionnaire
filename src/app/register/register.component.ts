@@ -41,8 +41,6 @@ export class RegisterComponent {
   nameFormControl = new FormControl('', [Validators.required]);
   phoneFormControl = new FormControl('', [Validators.required]);
 
-
-
   constructor(private router: Router) { }
   finish() {
     if (this.userEmail &&

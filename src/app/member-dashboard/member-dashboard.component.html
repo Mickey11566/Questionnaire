@@ -28,7 +28,7 @@
 
 
       <mat-form-field style="width: 75%;" appearance="outline" class="password-form-field">
-        <input required placeholder="New Password" [(ngModel)]="userPassword" matInput
+        <input required placeholder="Password" [(ngModel)]="userPassword" matInput
           [type]="pwdHide ? 'password' : 'text'">
         <button style="border: none; background: none; margin-right: 0.3vw;" mat-icon-button matSuffix
           (click)="pwdHide = !pwdHide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="pwdHide">
