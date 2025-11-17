@@ -2,74 +2,80 @@
   <div class="formDate">
     <h3>可填寫時間： {{currentFormData?.startDate}} 至 {{currentFormData?.endDate}}</h3>
   </div>
-  <div class="formTitle">
-    <h1>{{currentFormData?.name}}</h1>
-  </div>
-  <div class="formDescription">
-    {{currentFormData?.description}}
-  </div>
+
 </div>
 
-<div class="formContent">
+<main>
+  <div class="formInfo">
+    <div class="formTitle">
+      <h1>{{currentFormData?.name}}</h1>
+    </div>
+    <div class="formDescription">
+      <h3>{{currentFormData?.description}}</h3>
+    </div>
+  </div>
 
-  @if (currentFormData?.questions) {
-  <div class="question-list">
+  <div class="formContent">
 
-    @for (question of currentFormData.questions; track question.id; let i = $index) {
-    <div class="question-item" style="
+    @if (currentFormData?.questions) {
+    <div class="question-list">
+
+      @for (question of currentFormData.questions; track question.id; let i = $index) {
+      <div class="question-item" style="
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1vh;">
-      <h3>
-        Q{{i + 1}}. {{question.text}}
-        @if (question.required) {
-        <span style="color: red;">*</span>
+        <h2>
+          Q{{i + 1}}. {{question.text}}
+          @if (question.required) {
+          <span style="color: red;">*</span>
+          }
+        </h2>
+
+        @switch (question.type) {
+
+        @case ('single') {
+        @for (option of question.options; track option) {
+        <div class="option">
+          <input type="radio" [id]="'q' + question.id + 'opt' + option" [name]="'q' + question.id" [value]="option">
+          <label [for]="'q' + question.id + 'opt' + option">{{option}}</label>
+        </div>
         }
-      </h3>
+        }
 
-      @switch (question.type) {
+        @case ('multiple') {
+        @for (option of question.options; track option) {
+        <div class="option">
+          <input type="checkbox" [id]="'q' + question.id + 'opt' + option" [name]="'q' + question.id" [value]="option">
+          <label [for]="'q' + question.id + 'opt' + option">{{option}}</label>
+        </div>
+        }
+        }
 
-      @case ('single') {
-      @for (option of question.options; track option) {
-      <div class="option">
-        <input type="radio" [id]="'q' + question.id + 'opt' + option" [name]="'q' + question.id" [value]="option">
-        <label [for]="'q' + question.id + 'opt' + option">{{option}}</label>
+        @case ('short-answer') {
+        <textarea style="resize: none; border-radius: 4px; font-size: 1rem; font-weight: 700;" rows="4" cols="30"
+          maxlength="100" placeholder="請在此輸入您的回答..."></textarea>
+        }
+
+        @default {
+        <p>無法識別的問題類型。</p>
+        }
+        }
       </div>
       }
-      }
-
-      @case ('multiple') {
-      @for (option of question.options; track option) {
-      <div class="option">
-        <input type="checkbox" [id]="'q' + question.id + 'opt' + option" [name]="'q' + question.id" [value]="option">
-        <label [for]="'q' + question.id + 'opt' + option">{{option}}</label>
-      </div>
-      }
-      }
-
-      @case ('short-answer') {
-      <textarea style="resize: none; border-radius: 4px; font-size: 1rem; font-weight: 700;" rows="4" cols="30"
-        maxlength="100" placeholder="請在此輸入您的回答..."></textarea>
-      }
-
-      @default {
-      <p>無法識別的問題類型。</p>
-      }
+      @empty {
+      <p>此問卷目前沒有任何問題。</p>
       }
     </div>
+    } @else {
+    <p>正在載入問卷資料...</p>
     }
-    @empty {
-    <p>此問卷目前沒有任何問題。</p>
-    }
-  </div>
-  } @else {
-  <p>正在載入問卷資料...</p>
-  }
 
 
-  <div class="formButton">
-    <button class="cancleBtn" routerLink="/list">返回</button>
-    <button class="reviewBtn" (click)="previewForm()" routerLink="/review">預覽</button>
+    <div class="formButton">
+      <button class="cancleBtn" routerLink="/list">返回</button>
+      <button class="reviewBtn" (click)="previewForm()" routerLink="/review">預覽</button>
+    </div>
   </div>
-</div>
+</main>

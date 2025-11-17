@@ -15,12 +15,6 @@ export class QuestionnaireService {
   startDate!: string; //問卷開始日期
   endDate!: string;//問卷結束日期
 
-  // 問卷填寫的內容
-  inputName!: string;  //填寫的名字
-  inputEmail!: string; //填寫的Email
-  inputPhone!: string; //填寫的電話
-  inputAge!: number; //填寫的年紀
-  inputContent!: string; //填寫的原因
 
   // 使用 BehaviorSubject 來儲存和廣播問卷資料
   private currentSurveySubject = new BehaviorSubject<Survey | null>(null);
@@ -96,7 +90,7 @@ export class QuestionnaireService {
       name: '顧客服務品質調查',
       description: "顧客滿意是品牌成功的關鍵。你認為我們的服務流程是否友善且高效？",
       status: "尚未開始",
-      startDate: "2025-12-10",
+      startDate: "2025-11-10",
       endDate: "2025-12-25",
     },
     {
@@ -263,8 +257,7 @@ export class QuestionnaireService {
 
   // 模擬列表資料 (包含題目的完整問卷資料)
   private surveys: Survey[] = [
-    // 這裡可以放您的 ListItem 轉化為 Survey 的初始資料
-    // 但為簡化，我們先假設它從空開始，或只包含 ListItem
+    // 可放 ListItem 轉化為 Survey 的初始資料，假設它從空開始，或只包含 ListItem
   ];
 
 
@@ -277,7 +270,7 @@ export class QuestionnaireService {
   addSurvey(newSurvey: Survey): void {
     this.surveys.push(newSurvey);
 
-    // 如果您想讓新問卷同時出現在 listData 中，也要加進去
+    // 新問卷同時出現在 listData 中，也要加進去
     const newListItem: ListItem = newSurvey;
     this.listData.push(newListItem);
 
@@ -287,7 +280,7 @@ export class QuestionnaireService {
 
   // 獲取單個問卷的方法
   getSurveyById(id: number): Observable<Survey | undefined> {
-    // 在實際應用中，這裡會是 HTTP 請求
+    // 這裡會是 HTTP 請求
     const survey = this.surveys.find(s => s.id === id);
     return of(survey); // 返回 Observable<Survey | undefined>
   }
