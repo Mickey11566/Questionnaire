@@ -4,7 +4,8 @@ import { Component } from '@angular/core';
 
 // sweetalert
 import Swal from 'sweetalert2';
-import { FormResponse, Question, ReviewDraft, Survey, UserAnswer } from '../@interfaces/list-item';
+import { FormResponse, FullSurvey, Question, ReviewDraft, ReviewItem, UserAnswer } from '../@interfaces/list-item';
+import { CommonModule } from '@angular/common';
 
 // 這是 Review 畫面上要顯示的資料結構
 export interface ReviewQuestion extends Question {
@@ -13,14 +14,20 @@ export interface ReviewQuestion extends Question {
 
 @Component({
   selector: 'app-review',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './review.component.html',
   styleUrl: './review.component.scss'
 })
 export class ReviewComponent {
 
-  reviewData: ReviewDraft | null = null;
-  questionnaireBasicInfo: any; // 用來儲存 name/description/date 等資訊
+  // 存放從 Service 載入的草稿數據
+  draftData: ReviewDraft | null = null;
+
+  // 存放問卷的完整結構 (用於獲取問題文本)
+  surveyData: FullSurvey | null = null;
+
+  // 最終用於模板顯示的列表
+  reviewList: ReviewItem[] = [];
 
   public surveyReviewData: any | undefined;
   public reviewQuestions: ReviewQuestion[] = [];
@@ -32,76 +39,120 @@ export class ReviewComponent {
   constructor(private questionnaireService: QuestionnaireService, private router: Router) { }
 
   ngOnInit(): void {
-    this.userResponse = this.questionnaireService.getCurrentResponse();
+    this.draftData = this.questionnaireService.getDraftData();
 
-    if (!this.userResponse) {
-      // 如果沒有暫存的回答，導回填寫頁面或列表
+    if (!this.draftData) {
+      // 如果沒有草稿數據，導回列表
+      console.warn('未找到草稿數據，導回列表。');
       this.router.navigate(['/list']);
       return;
     }
 
-    // 取得完整的問卷結構
-    this.surveyReviewData = this.questionnaireService.getSurveyById(this.userResponse.surveyId);
-
-    if (this.surveyReviewData) {
-      // 合併問題和用戶回答
-      this.reviewQuestions = this.mapQuestionsWithAnswers(this.surveyReviewData.questions, this.userResponse.answers);
-    }
-  }
-
-  // 核心邏輯：將問題與回答合併
-  private mapQuestionsWithAnswers(questions: Question[], answers: UserAnswer[]): ReviewQuestion[] {
-    return questions.map(q => {
-      const userAnswer = answers.find(a => a.questionId === q.id);
-
-      let answerText = '未填寫'; // 預設值
-
-      if (userAnswer && userAnswer.answer) {
-        if (Array.isArray(userAnswer.answer)) {
-          // 複選題：將陣列用逗號連接
-          answerText = userAnswer.answer.join(', ');
+    // 呼叫 Service 獲取完整的問卷結構，以便將答案與問題文本匹配
+    this.questionnaireService.getSurveyById(this.draftData.surveyId).subscribe({
+      next: (data: FullSurvey | undefined) => {
+        if (data) {
+          this.surveyData = data;
+          this.mapAnswersToQuestions(data, this.draftData!.answers);
         } else {
-          // 單選或簡答題
-          answerText = String(userAnswer.answer);
+          console.error('無法載入問卷結構！');
+          this.router.navigate(['/list']);
         }
+      },
+      error: (err) => {
+        console.error('載入問卷結構失敗:', err);
+        this.router.navigate(['/list']);
       }
-
-      return {
-        ...q,
-        userAnswerText: answerText
-      } as ReviewQuestion;
     });
   }
+  /**
+     * 將用戶的答案 (questionId: answer) 與完整的問題文本 (FullSurvey) 進行匹配
+     * @param survey 完整的問卷結構
+     * @param answers 用戶填寫的答案 Record<string, any>
+     */
+  private mapAnswersToQuestions(survey: FullSurvey, answers: Record<string, any>): void {
+    const list: ReviewItem[] = [];
 
-  submitForm() {
-    if (this.reviewData) {
-      // **console.log 出使用者選擇的答案 JSON 格式**
-      // 這裡直接 log 整個 answers 物件
-      const finalJsonData = JSON.stringify(this.reviewData.answers, null, 2);
+    survey.questions.forEach((question: Question) => {
+      const questionId = question.id.toString();
+      const rawAnswer = answers[questionId];
 
-      console.log('--- 使用者填寫的答案 JSON 格式 ---');
-      console.log(finalJsonData);
-      console.log('------------------------------------');
+      let displayAnswer: any;
 
-      this.questionnaireService.clearDraftData();
-      Swal.fire({
-        title: "提交完成！",
-        icon: "success",
-        timer: 1200,
-        showConfirmButton: false
+      // 格式化答案以供顯示 (例如，將陣列轉換為逗號分隔的字串)
+      if (question.type === 'multiple' && Array.isArray(rawAnswer)) {
+        displayAnswer = rawAnswer.join(', ');
+      } else {
+        displayAnswer = rawAnswer || '未填寫';
+      }
+
+      list.push({
+        questionText: question.text,
+        questionType: question.type,
+        userAnswer: displayAnswer
       });
-      setTimeout(() => {
-        this.router.navigateByUrl('list')
-      }, 1300);
+    });
+
+    this.reviewList = list;
+  }
+
+  /**
+   * 返回填寫頁面，保留草稿數據
+   */
+  goBackToForm(): void {
+    // 導航回原來的問卷填寫頁面
+    if (this.draftData) {
+      this.router.navigate(['/form', this.draftData.surveyId]);
+    } else {
+      this.router.navigate(['/list']);
     }
   }
 
-  goBack() {
-    // 導航回表單頁面
-    if (this.reviewData && this.reviewData.surveyId) {
-      this.router.navigate(['/form', this.reviewData.surveyId]);
-    } else {
-      this.router.navigate(['/']);
+  /**
+   * 最終提交表單
+   */
+  submitForm(): void {
+    if (!this.draftData || !this.surveyData) {
+      alert('資料不完整，無法提交。');
+      return;
     }
+
+    // 1. 將 answers: Record<string, any> 轉換為 FormResponse 要求的結構
+    const userAnswers: FormResponse['answers'] = [];
+    for (const id in this.draftData.answers) {
+      if (this.draftData.answers.hasOwnProperty(id)) {
+        userAnswers.push({
+          questionId: parseInt(id, 10), // 轉換為數字
+          answer: this.draftData.answers[id]
+        });
+      }
+    }
+
+    const response: FormResponse = {
+      surveyId: this.draftData.surveyId,
+      answers: userAnswers,
+      // submissionTime: new Date()
+      // 可以在這裡添加其他提交資訊
+    };
+
+    // 2. 呼叫 Service 提交答案
+    //  Service 裡有一個實際的提交方法，例如：
+    // this.questionnaireService.submitResponse(response).subscribe(
+    //   () => { ...
+    // );
+
+    console.log('問卷提交數據:', response);
+
+    // 3. 提交成功後的關鍵步驟：清除草稿並導航
+    this.questionnaireService.clearDraftData();
+
+    // 顯示成功訊息 (可選)
+    Swal.fire({ title: "問卷提交成功！", icon: "success", timer: 1500, showConfirmButton: false });
+    setTimeout(() => {
+
+      // 導航到成功頁面或列表頁
+      this.router.navigate(['/list']);
+    }, 1500);
   }
+
 }

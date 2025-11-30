@@ -1,129 +1,138 @@
-import { CurrentFormData, ListItem, ReviewDraft, Survey } from './../@interfaces/list-item';
+import { ReviewDraft, FullSurvey } from './../@interfaces/list-item';
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { QuestionnaireService } from '../@services/questionnaire.service';
-import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
+import { switchMap } from 'rxjs';
+
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-question-form',
-  imports: [RouterLink, FormsModule,],
+  imports: [FormsModule],
   templateUrl: './question-form.component.html',
   styleUrl: './question-form.component.scss'
 })
 export class QuestionFormComponent {
 
   // 存放從 Service 載入的問卷資料型態
-  surveyData: Survey | null = null;
+  surveyData: FullSurvey | null = null;
 
-  // 用於收集使用者答案的頂層 FormGroup
-  surveyForm!: FormGroup;
+  // 新增答案數據模型，用於雙向綁定
+  userAnswers: Record<string, any> = {};
 
-  // 儲存問卷的基本資訊
-  questionnaireInfo: any;
-
-  // 用於收集動態答案的物件
-  formAnswers: Record<string, any> = {};
-
-  private fullSurveyData: Survey[] = [];
-
-  currentFormData: any | undefined; // 用來儲存當前表單要顯示的資料
-
-  constructor(private fb: FormBuilder, private route: ActivatedRoute, private router: Router, private questionnaireService: QuestionnaireService) { }
+  constructor(private route: ActivatedRoute, private router: Router, private questionnaireService: QuestionnaireService) { }
 
   ngOnInit(): void {
 
-    const draft = this.questionnaireService.getDraftData();
+    // 1. 統一的資料載入邏輯：處理路由 ID 變更並從 Service 獲取數據
+    this.route.params.pipe(
+      // 當路由參數改變時，切換到新的 Service 請求
+      switchMap(params => {
+        const surveyId = +params['id']; // 將路由參數（字串）轉換為數字
 
-    // 1. 取得路由中的 ID
-    this.route.params.subscribe(params => {
-      const surveyId = +params['id']; // 將路由參數（字串）轉換為數字
-
-      // 2. 呼叫合併資料的方法
-      this.currentFormData = this.getCombinedSurveyData(surveyId);
-
-      if (!this.currentFormData) {
-        console.error('找不到對應的問卷資料！ID:', surveyId);
-        // 處理找不到資料的情況，例如導回列表頁
-      }
-    });
-
-
-    if (draft && draft.answers) {
-
-      if (draft.surveyId) {
-        const idNumber = draft.surveyId;
-        this.currentFormData = this.questionnaireService.getFullSurveyById(idNumber);
-      }
-
-    } else {
-      // 2. 如果沒有草稿，執行正常的初始化流程
-      this.route.paramMap.subscribe(params => {
-        const formId = params.get('id');
-        if (formId) {
-          const idNumber = +formId;
-          this.currentFormData = this.questionnaireService.getFullSurveyById(idNumber);
+        // 檢查草稿數據 (如果草稿存在且ID匹配，我們假設草稿處理會覆蓋初始值)
+        const draft = this.questionnaireService.getDraftData();
+        if (draft && draft.surveyId === surveyId) {
+          console.log(`問卷 ID ${surveyId} 載入成功，發現草稿。`);
+        } else {
+          console.log(`問卷 ID ${surveyId} 載入成功，無草稿。`);
         }
-      });
 
-    }
+        // 呼叫 Service 的方法，它返回一個 Observable
+        return this.questionnaireService.getSurveyById(surveyId);
+      })
+    ).subscribe({ //使用單一物件訂閱 (Next/Error 處理)
+      // 2. 訂閱：接收 Service 返回的【實際 FullSurvey 資料】
+      next: (data: FullSurvey | undefined) => {
+        if (data) {
+          this.surveyData = data; // 成功取得資料，賦值給 Component 屬性
 
-    this.route.paramMap.subscribe(params => {
-      const formId = params.get('id'); // 取得 URL 中的 'id' (字串型態)
+          // 初始化 userAnswers 結構並載入草稿
+          this.initializeUserAnswers(data);
 
-      if (formId) {
-        const idNumber = +formId; // 將字串轉換為數字
-
-        // 從 Service 獲取問卷的基本資訊
-        this.questionnaireInfo = this.questionnaireService.getFullSurveyById(idNumber);
-
-        // 透過 Service 的方法根據 ID 取得資料
-        this.currentFormData = this.questionnaireService.getFullSurveyById(idNumber);
+        } else {
+          // 找不到資料時的錯誤處理
+          const currentId = +this.route.snapshot.params['id'];
+          console.error(`找不到對應的問卷資料！ID: ${currentId}`);
+          alert(`問卷 ID ${currentId} 不存在。將導回列表。`);
+          this.router.navigate(['/list']);
+        }
+      },
+      error: (error) => {
+        console.error('載入問卷時發生錯誤:', error);
       }
     });
   }
 
-  getCombinedSurveyData(id: number): CurrentFormData | undefined {
-    // 從 fullSurveyData 找到包含 questions 的完整資料
-    const fullData = this.fullSurveyData.find(survey => survey.id === id);
+  /**
+ * 初始化 userAnswers 物件，並從草稿中載入數據
+ */
+  private initializeUserAnswers(survey: FullSurvey): void {
+    const draft = this.questionnaireService.getDraftData();
+    const answers: Record<string, any> = {};
 
-    if (fullData) {
-      // 提取 questions 以外的 ListItem 屬性
-      const { questions, ...listItem } = fullData;
+    survey.questions.forEach(question => {
+      const questionId = question.id.toString();
+      const savedAnswer = draft?.answers ? draft.answers[questionId] : null;
 
-      // 合併並返回結果
-      return {
-        ...listItem, // 包含 id, name, description, status, startDate, endDate
-        questions: questions // 包含問題陣列
-      };
-    }
+      let initialValue;
+      if (savedAnswer !== null) {
+        initialValue = savedAnswer;
+      } else {
+        // 如果是 multiple 類型，初始化為空陣列 []
+        initialValue = (question.type === 'multiple' ? [] : '');
+      }
 
-    return undefined; // 找不到對應 ID 的資料
+      answers[questionId] = initialValue;
+    });
+
+    this.userAnswers = answers;
+    console.log('答案結構初始化完成:', this.userAnswers);
   }
 
+  /**
+ * 處理多選題 (Checkbox) 的勾選/取消勾選事件，並更新 userAnswers 陣列
+ * @param questionId 當前問題的 ID
+ * @param optionValue 選項的值 (e.g., '選項A')
+ * @param event 勾選事件
+ */
+  onCheckboxChange(questionId: string, optionValue: string, event: Event): void {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    const answerArray = this.userAnswers[questionId] as string[];
+
+    if (isChecked) {
+      // 勾選時：將選項值加入陣列
+      if (!answerArray.includes(optionValue)) {
+        answerArray.push(optionValue);
+      }
+    } else {
+      // 取消勾選時：從陣列中移除選項值
+      const index = answerArray.indexOf(optionValue);
+      if (index > -1) {
+        answerArray.splice(index, 1);
+      }
+    }
+  }
+
+  // 修正 previewForm 以使用 userAnswers
   previewForm() {
-    if (!this.questionnaireInfo) {
-      console.error('未找到問卷基本資訊');
+    if (!this.surveyData) {
+      console.error('問卷資料尚未載入');
       return;
     }
 
-    // 1. 收集所有答案到 answers: Record<string, any> 物件中
-    const answersData: Record<string, any> = {
-    };
-
-    // 2. 組成 ReviewDraft 物件
     const draftData: ReviewDraft = {
-      surveyId: this.currentFormData.id,
-      surveyName: this.currentFormData.name, // 將 name 放入 draft，方便 Review 頁面顯示
-      answers: answersData,
-      submittedAt: new Date(),
+      surveyId: this.surveyData.id,
+      surveyName: this.surveyData.name,
+      answers: this.userAnswers, // 使用這個答案物件
+      lastSaved: new Date(),
     };
 
-    // 3. 存入 Service
     this.questionnaireService.setDraftData(draftData);
-
     this.router.navigateByUrl('/review');
-
-
   }
 
+  backList() {
+    this.router.navigateByUrl('/list');
+  }
 }

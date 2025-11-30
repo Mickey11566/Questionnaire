@@ -44,6 +44,7 @@ export class ManageComponent {
 
   // 儲存當前頁面要顯示的資料 (用於表格顯示)
   pagedData: ListItem[] = [];
+  listData: ListItem[] = []; // 存放所有列表資料
 
   // 使用 Set 來追蹤所有被勾選的項目 ID
   selectedItemIds: Set<number> = new Set<number>();
@@ -53,16 +54,23 @@ export class ManageComponent {
 
   ngOnInit(): void {
 
-    // 確保在元件初始化時，filteredData 被正確設定
-    this.allfilteredData = [...this.questionList.listData];
+    this.loadData();
 
     // 分頁功能
     this.totalItems = this.allfilteredData.length;
     this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
     this.updatePagedData(); // 初始載入第一頁數據
-
   }
 
+  loadData(): void {
+    this.questionList.getSurveyListItems().subscribe(data => {
+      this.listData = data;
+      this.allfilteredData = [...this.listData];
+
+      // 建議: 直接在 data 載入後執行 searchForm，以統一初始化和篩選流程
+      this.searchForm();
+    });
+  }
   /**
      * 處理 Checkbox 狀態變更
      * @param id 列表項目的唯一 ID
@@ -200,7 +208,7 @@ export class ManageComponent {
 
   // 搜尋與篩選邏輯
   searchForm() {
-    let tempArray = this.questionList.listData;
+    let tempArray = [...this.listData];
 
     // 根據「問卷名稱」進行篩選 (如果 searchData 有值)
     if (this.searchData) {

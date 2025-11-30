@@ -10,10 +10,15 @@ import { AdminComponent } from './admin/admin.component';
 import { ManageComponent } from './manage/manage.component';
 import { AddFormComponent } from './add-form/add-form.component';
 import { CheckFormComponent } from './check-form/check-form.component';
+import { HistoryComponent } from './history/history.component';
 
 export const routes: Routes = [
   {
     path: "list", component: ListComponent,
+  },
+
+  {
+    path: "history", component: HistoryComponent,
   },
 
   {

@@ -15,7 +15,7 @@ import { MatButtonModule } from '@angular/material/button'; // <-- 新增
 import { MatSelectModule } from '@angular/material/select'; // <-- 新增
 import { MatCheckboxModule } from '@angular/material/checkbox'; // <-- 新增
 import { MatDividerModule } from '@angular/material/divider'; // <-- 新增
-import { Question, Survey } from '../@interfaces/list-item';
+import { Question, FullSurvey } from '../@interfaces/list-item';
 
 
 // sweetalert
@@ -63,7 +63,7 @@ export class AddFormComponent {
   surveyIdToEdit: number | null = null;
 
   // 當前編輯的完整問卷資料
-  currentSurveyData!: Survey;
+  currentSurveyData!: FullSurvey;
 
   minDate: Date;
 
@@ -112,7 +112,7 @@ export class AddFormComponent {
   }
 
   // 將載入的問卷資料填充到表單和題目陣列中
-  loadSurveyData(survey: Survey): void {
+  loadSurveyData(survey: FullSurvey): void {
     this.currentSurveyData = survey;
 
     // 填充基本資料表單
@@ -228,7 +228,7 @@ export class AddFormComponent {
 
     if (this.isEditMode && this.surveyIdToEdit) {
       // **編輯模式：更新現有問卷**
-      const updatedSurvey: Survey = {
+      const updatedSurvey: FullSurvey = {
         ...this.currentSurveyData, // 保留原有的 ID 和狀態等
         name: basicData.name,
         description: basicData.description,
@@ -247,7 +247,7 @@ export class AddFormComponent {
     } else {
       // 組合完整的 Survey 物件
       // 這裡我們模擬 ID 和 Status 的生成
-      const newSurvey: Survey = {
+      const newSurvey: FullSurvey = {
         id: Math.floor(Math.random() * 1000) + 16, // 臨時生成一個 ID
         name: basicData.name,
         description: basicData.description,

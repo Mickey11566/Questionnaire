@@ -1,75 +1,39 @@
-<!-- <div class="formHeader">
-  <div class="formDate">
-    <h3>可填寫時間： {{currentFormData?.startDate}} 至 {{currentFormData?.endDate}}</h3>
+<main class="review-container">
+
+  @if (surveyData) {
+  <div class="header">
+    <h1>預覽問卷：{{surveyData.name}}</h1>
+    <p>請檢查您的回答，確認無誤後點擊「送出」。</p>
   </div>
-  <div class="formTitle">
-    <h1>{{currentFormData?.name}}</h1>
-  </div>
-  <div class="formDescription">
-    {{currentFormData?.description}}
-  </div>
-</div>
 
-<div class="formContent">
+  <div class="review-list">
+    @for (item of reviewList; track $index) {
+    <div class="review-item">
 
-  @if (currentFormData?.questions) {
-  <div class="question-list">
-
-    @for (question of currentFormData.questions; track question.id; let i = $index) {
-    <div class="question-item" style="
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1vh;">
-      <h3>
-        Q{{i + 1}}. {{question.text}}
-        @if (question.required) {
-        <span style="color: red;">*</span>
-        }
-      </h3>
-
-      @switch (question.type) {
-
-      @case ('single') {
-      @for (option of question.options; track option) {
-      <div class="option">
-        <input type="radio" [id]="'q' + question.id + 'opt' + option" [name]="'q' + question.id" [value]="option">
-        <label [for]="'q' + question.id + 'opt' + option">{{option}}</label>
+      <div class="question-title">
+        <strong>Q{{$index + 1}}. {{item.questionText}}</strong>
       </div>
-      }
-      }
 
-      @case ('multiple') {
-      @for (option of question.options; track option) {
-      <div class="option">
-        <input type="checkbox" [id]="'q' + question.id + 'opt' + option" [name]="'q' + question.id" [value]="option">
-        <label [for]="'q' + question.id + 'opt' + option">{{option}}</label>
+      <div class="user-answer">
+        <blockquote [ngClass]="{'not-answered': item.userAnswer === '未填寫'}">
+          {{item.userAnswer}}
+        </blockquote>
       </div>
-      }
-      }
 
-      @case ('short-answer') {
-      <textarea style="resize: none; border-radius: 4px; font-size: 1rem; font-weight: 700;" rows="4" cols="30"
-        maxlength="100" placeholder="請在此輸入您的回答..."></textarea>
-      }
-
-      @default {
-      <p>無法識別的問題類型。</p>
-      }
-      }
     </div>
     }
     @empty {
-    <p>此問卷目前沒有任何問題。</p>
+    <p>未找到任何問題或答案。</p>
     }
   </div>
   } @else {
-  <p>正在載入問卷資料...</p>
+  <p>正在載入問卷結構...</p>
   }
 
-
   <div class="formButton">
-    <button class="cancleBtn" (click)="goBack()">修改</button>
-    <button class="submitBtn" (click)="submitForm()">確認並提交</button>
+    <button class="cancleBtn" (click)="goBackToForm()">返回修改</button>
+
+    <button class="submitBtn" (click)="submitForm()" [disabled]="!draftData">送出問卷</button>
   </div>
-</div> -->
+
+</main>

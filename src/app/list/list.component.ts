@@ -24,13 +24,6 @@ import { ListItem } from '../@interfaces/list-item';
 export class ListComponent {
 
   constructor(private questionList: QuestionnaireService, private route: ActivatedRoute, private router: Router) { }
-
-  name!: string;
-  id!: number;
-  status!: string;
-  startDate!: string;
-  endDate!: string;
-  result!: string;
   userStartDate!: Date;
   userEndDate!: Date;
   currentPage = 1;         // 當前頁碼 (從 1 開始)
@@ -54,9 +47,6 @@ export class ListComponent {
 
     this.loadData();
 
-    // 確保在元件初始化時，filteredData 被正確設定
-    this.allfilteredData = [...this.questionList.listData];
-
     // 分頁功能
     this.totalItems = this.allfilteredData.length;
     this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
@@ -65,16 +55,11 @@ export class ListComponent {
   }
 
   loadData(): void {
-    // 呼叫 Service 的新方法，它會返回計算好最新狀態的資料
     this.questionList.getSurveyListItems().subscribe(data => {
-      // 1. 儲存所有未篩選的最新數據
       this.listData = data;
-
-      // 2. 將全體數據複製給篩選數據 (無篩選條件時，全部顯示)
       this.allfilteredData = [...this.listData];
 
-      // 3. 處理可能存在的搜尋條件（如果用戶在導航回來前有輸入）
-      // 建議直接執行一次完整的 searchForm() 進行初始化篩選和分頁
+      // 建議: 直接在 data 載入後執行 searchForm，以統一初始化和篩選流程
       this.searchForm();
     });
   }
@@ -181,6 +166,10 @@ export class ListComponent {
 
   logout() {
     this.router.navigateByUrl('login');
+  }
+
+  history() {
+    this.router.navigateByUrl("history");
   }
 
   revise(surveyId: number): void {

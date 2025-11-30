@@ -27,7 +27,7 @@ export interface Question {
 // -----------------------------------------------------------
 // 3. 完整的問卷定義 (包含基本資訊和題目列表)
 // -----------------------------------------------------------
-export interface Survey extends ListItem {
+export interface FullSurvey extends ListItem {
 
   // 額外新增的題目屬性
   questions: Question[];
@@ -38,6 +38,13 @@ export interface CurrentFormData extends ListItem {
   questions: Question[];
 }
 
+// 假設這裡定義一個用於顯示的結構，包含問題文本和用戶答案
+export interface ReviewItem {
+  questionText: string;
+  questionType: string;
+  userAnswer: any;
+}
+
 // -----------------------------------------------------------
 // 4. 問卷回答/草稿結構 (用於使用者填寫問卷時的資料)
 // -----------------------------------------------------------
@@ -45,13 +52,10 @@ export interface ReviewDraft {
   // 基礎資訊 (可以從填寫問卷的頁面帶入)
   surveyId: number; // 識別是哪一份問卷的答案
   surveyName?: string;
-
-
   // 動態問卷的答案，使用 Record<string, any> 來適應任何問答
   answers: Record<string, any>;
-
   // 如果您需要包含填寫的時間，可以新增
-  submittedAt?: Date;
+  lastSaved?: Date; // 最近一次儲存時間
 }
 
 export interface UserAnswer {
@@ -62,5 +66,5 @@ export interface UserAnswer {
 export interface FormResponse {
   surveyId: number;
   answers: UserAnswer[];
-  // 其他必要資訊，如填寫時間戳等
+  submittedAt?: Date; // 提交時間
 }
