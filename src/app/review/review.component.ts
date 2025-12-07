@@ -131,15 +131,9 @@ export class ReviewComponent {
     const response: FormResponse = {
       surveyId: this.draftData.surveyId,
       answers: userAnswers,
-      // submissionTime: new Date()
+      submittedAt: new Date()
       // 可以在這裡添加其他提交資訊
     };
-
-    // 2. 呼叫 Service 提交答案
-    //  Service 裡有一個實際的提交方法，例如：
-    // this.questionnaireService.submitResponse(response).subscribe(
-    //   () => { ...
-    // );
 
     console.log('問卷提交數據:', response);
 

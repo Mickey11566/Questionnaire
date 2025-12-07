@@ -2,7 +2,13 @@
   background-color: #F5F2EA;
 }
 
-.review-container{
+.review-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header {
   display: flex;
   flex-direction: column;
   align-items: center;

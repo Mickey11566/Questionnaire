@@ -1,3 +1,136 @@
+.formHeader {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  .formDate {
+    display: flex;
+    justify-content: flex-end;
+    width: 95%;
+  }
+
+
+  .formTitle {
+    display: flex;
+    justify-content: center;
+  }
+
+  .formDescription {
+    display: flex;
+    justify-content: center;
+    padding: 0 25vw;
+    margin-bottom: 3vh;
+    font-weight: 500;
+  }
+}
+
+main {
+  border-radius: 4px;
+  // border: 2px solid black;
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.formInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.formUser {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5vw;
+  margin: 0 5vw;
+
+  input {
+    margin-left: 1vw;
+    padding: 1vh 0.5vw;
+    font-size: medium;
+    border-radius: 10px;
+    background-color: white;
+    line-height: 2vh;
+  }
+
+}
+
+.formOptionA {
+  display: flex;
+  justify-content: center;
+  margin: 2vh 5vw;
+}
+
+.formOptionB {
+  display: flex;
+  justify-content: center;
+  margin: 2vh 5vw;
+
+  textarea {
+    background-color: white;
+  }
+}
+
+.formButton {
+  display: flex;
+  flex-direction: row;
+  gap: 3vw;
+  justify-content: center;
+  margin: 5vh 0;
+}
+
+.reviewBtn {
+  background-color: #D67C2F;
+  color: white;
+  border: none;
+  padding: 0.5vh 0.5vw;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: large;
+  font-weight: 600;
+  line-height: 1.5;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.reviewBtn:hover {
+  background-color: #d48e51;
+  transform: scale(1.1);
+}
+
+.reviewBtn:active {
+  transform: scale(0.95);
+}
+
+
+.cancleBtn {
+  background-color: #4a4847;
+  color: white;
+  border: none;
+  padding: 0.5vh 0.5vw;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: large;
+  font-weight: 600;
+  line-height: 1.5;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cancleBtn:hover {
+  background-color: #2d241d;
+  transform: scale(1.1);
+}
+
+.cancleBtn:active {
+  transform: scale(0.95);
+}
 
 .navBar {
   display: flex;

@@ -1,3 +1,83 @@
+@if (surveyData) {
+<main>
+  <div class="formHeader">
+    <div class="formDate">
+      <h3>可填寫時間： {{surveyData.startDate}} 至 {{surveyData.endDate}}</h3>
+    </div>
+  </div>
+
+  <div class="formInfo">
+    <div class="formTitle">
+      <h1>{{surveyData.name}}</h1>
+    </div>
+    <div class="formDescription">
+      <h3>{{surveyData.description}}</h3>
+    </div>
+  </div>
+
+  <div class="formContent">
+
+    @if (surveyData.questions && surveyData.questions.length > 0) {
+    <div class="question-list">
+
+      @for (question of surveyData.questions; track question.id; let i = $index) {
+      <div class="question-item" style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1vh;">
+
+        <h2>
+          Q{{i + 1}}. {{question.text}}
+          @if (question.required) {
+          <span style="color: red;">*</span>
+          }
+        </h2>
+
+        @switch (question.type) {
+
+        @case ('single') {
+        @for (option of question.options; track option) {
+        <div class="option">
+          <input disabled type="radio" [id]="'q' + question.id + 'opt' + option" [name]="question.id.toString()">
+          <label [for]="'q' + question.id + 'opt' + option">{{option}}</label>
+        </div>
+        }
+        }
+
+        @case ('multiple') {
+        @for (option of question.options; track option) {
+        <div class="option">
+          <input disabled type="checkbox" [id]="'q' + question.id + 'opt' + option" [name]="question.id.toString()"
+            [value]="option">
+
+          <label [for]="'q' + question.id + 'opt' + option">{{option}}</label>
+        </div>
+        }
+        }
+
+        @case ('short-answer') {
+        <textarea disabled style="resize: none; border-radius: 4px; font-size: 1rem; font-weight: 700;" rows="4"
+          cols="30" maxlength="100" placeholder="請在此輸入您的回答..."></textarea>
+        }
+
+        @default {
+        <p>無法識別的問題類型。</p>
+        }
+        }
+
+      </div>
+      }
+    </div>
+    } @else {
+    <p>此問卷目前沒有任何問題。</p>
+    }
+
+
+  </div>
+</main>
+}
+
 <nav class="navBar">
   <ul>
     <li (click)="checkList()" style="--i:#FF9966;--j:#FF5E62">
