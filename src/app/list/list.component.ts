@@ -13,6 +13,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { CommonModule } from '@angular/common';
 import { ListItem } from '../@interfaces/list-item';
+import { HttpClientService } from '../@http-services/http-client.service';
 
 @Component({
   selector: 'app-list',
@@ -23,7 +24,7 @@ import { ListItem } from '../@interfaces/list-item';
 })
 export class ListComponent {
 
-  constructor(private questionList: QuestionnaireService, private route: ActivatedRoute, private router: Router) { }
+  constructor(private questionList: QuestionnaireService, private httpClientService: HttpClientService, private router: Router) { }
   userStartDate!: Date;
   userEndDate!: Date;
   currentPage = 1;         // 當前頁碼 (從 1 開始)
@@ -41,25 +42,17 @@ export class ListComponent {
 
   // 儲存當前頁面要顯示的資料 (用於表格顯示)
   pagedData: ListItem[] = [];
-  listData: ListItem[] = []; // 存放所有列表資料
+  quizzes: ListItem[] = []; // 存放所有列表資料
 
   ngOnInit(): void {
-
     this.loadData();
-
-    // 分頁功能
-    this.totalItems = this.allfilteredData.length;
-    this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
-    this.updatePagedData(); // 初始載入第一頁數據
-
   }
 
   loadData(): void {
-    this.questionList.getSurveyListItems().subscribe(data => {
-      this.listData = data;
-      this.allfilteredData = [...this.listData];
 
-      // 建議: 直接在 data 載入後執行 searchForm，以統一初始化和篩選流程
+    this.questionList.getSurveyListItems().subscribe(data => {
+      this.quizzes = data;
+      // 在 data 載入後執行 searchForm()，初始化和篩選流程
       this.searchForm();
     });
   }
@@ -112,7 +105,14 @@ export class ListComponent {
 
   // 搜尋與篩選邏輯
   searchForm() {
-    let tempArray = [...this.listData];
+    if (!this.quizzes || this.quizzes.length == 0) {
+      this.allfilteredData = [];
+      this.updatePagedData();
+      return;
+    }
+
+
+    let tempArray = [...this.quizzes];
 
     // 根據「問卷名稱」進行篩選 (如果 searchData 有值)
     if (this.searchData) {
@@ -126,14 +126,22 @@ export class ListComponent {
     if (this.userStartDate || this.userEndDate) {
       tempArray = tempArray.filter(data => {
         // 將資料中的日期字串轉換為 Date 物件，以便比較
-        const itemStartDate = new Date(data.startDate);
-        const itemEndDate = new Date(data.endDate);
+        const itemStartDate = new Date(data.startDate).getTime();
+        const itemEndDate = new Date(data.endDate).getTime();
 
-        // 將使用者選擇的日期進行調整，以便進行區間判斷
-        // 開始日期：應當包含當日（所以時間用 00:00:00）
-        const searchStart = this.userStartDate ? new Date(this.userStartDate.setHours(0, 0, 0, 0)) : null;
-        // 結束日期：應當包含當日（所以時間用 23:59:59）
-        const searchEnd = this.userEndDate ? new Date(this.userEndDate.setHours(23, 59, 59, 999)) : null;
+        let searchStart = null;
+        if (this.userStartDate) {
+          const d = new Date(this.userStartDate);
+          d.setHours(0, 0, 0, 0);
+          searchStart = d.getTime();
+        }
+
+        let searchEnd = null;
+        if (this.userEndDate) {
+          const d = new Date(this.userEndDate);
+          d.setHours(29, 59, 59, 999);
+          searchEnd = d.getTime();
+        }
 
 
         // 判斷問卷的區間是否與搜尋區間有交集

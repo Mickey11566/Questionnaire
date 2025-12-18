@@ -128,11 +128,12 @@ export class AddFormComponent {
     // 必須深層複製題目，避免直接修改 Service 裡面的資料
     this.questions = JSON.parse(JSON.stringify(survey.questions));
 
-    // 設定 nextQuestionId，確保新增題目時 ID 不重複
-    this.nextQuestionId = this.questions.length > 0 ?
-      Math.max(...this.questions.map(q => q.id)) + 1 : 1;
-
-    console.log(`正在編輯問卷 ID: ${this.surveyIdToEdit}`);
+    // 確保載入的題目 ID 也是正確的
+    this.questions = this.questions.map(q => ({
+      ...q,
+      // 防呆：如果後端給的 questionId 剛好是 0，強制轉為 1 (或依需求處理)
+      questionId: q.questionId === 0 ? 1 : q.questionId
+    }));
   }
 
   resetForNewSurvey(): void {
@@ -183,93 +184,113 @@ export class AddFormComponent {
 
   // --- 題目操作方法 (與前次提供的一致) ---
 
-  addQuestion(type: any): void {
-    const newQuestion: Question = {
-      id: this.nextQuestionId++,
-      text: `新問題 ${this.nextQuestionId - 1}`,
+  // 題目操作方法修改
+  addQuestion(type: 'single' | 'multiple' | 'short-answer'): void {
+
+    const maxId = this.questions.length > 0
+      ? Math.max(...this.questions.map(q => q.questionId || 0))
+      : 0;
+
+    const newQuestion: any = {
+      questionId: maxId + 1,
+      quizId: this.surveyIdToEdit || 0,
+      question: `新問題內容`, // 原本是 text
       type: type,
       required: false,
-      options: type !== 'short-answer' ? ['選項一', '選項二'] : undefined
+      // 後端要求 optionsList 即使是空也要是 []
+      optionsList: type !== 'short-answer' ? [
+        { code: 1, optionName: '選項一' },
+        { code: 2, optionName: '選項二' }
+      ] : []
     };
     this.questions.push(newQuestion);
   }
 
   deleteQuestion(questionId: number): void {
-    this.questions = this.questions.filter(q => q.id !== questionId);
+    this.questions = this.questions.filter(q => q.questionId !== questionId);
   }
 
-  addOption(question: Question): void {
-    if (question.options) {
-      question.options.push(`新選項 ${question.options.length + 1}`);
+  addOption(question: any): void {
+    if (question.optionsList) {
+      const newCode = question.optionsList.length > 0
+        ? Math.max(...question.optionsList.map((o: any) => o.code)) + 1
+        : 1;
+      question.optionsList.push({
+        code: newCode,
+        optionName: `新選項 ${newCode}`
+      });
     }
   }
 
   deleteOption(question: Question, optionIndex: number): void {
-    if (question.options) {
-      question.options.splice(optionIndex, 1);
+    if (question.optionsList) {
+      question.optionsList.splice(optionIndex, 1);
     }
+  }
+
+  // 確保取得的是當地日期的字串，而不受 UTC 轉換影響
+  getLocalDateString(date: Date): string {
+    const d = new Date(date);
+    // 手動格式化，不使用 toISOString()，避免時區位移
+    const year = d.getFullYear();
+    const month = ('0' + (d.getMonth() + 1)).slice(-2);
+    const day = ('0' + d.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
   }
 
   // 提交表單
   submitSurvey(): void {
-    // 檢查是否有題目
     if (this.questions.length === 0) {
-      Swal.fire({
-        title: "請至少新增一個問題！",
-        icon: "error",
-        timer: 1200,
-        showConfirmButton: false
-      });
+      Swal.fire({ title: "請至少新增一個問題！", icon: "error" });
       return;
     }
 
-    // 取得基本資料
     const basicData = this.basicForm.value;
 
+    // 1. 建立符合 API 規格的物件
+    const payload: any = {
+      quizId: this.surveyIdToEdit, // 修改模式的核心：告訴後端是哪一份問卷
+      title: basicData.name,
+      description: basicData.description,
+      startDate: this.getLocalDateString(basicData.startDate),
+      endDate: this.getLocalDateString(basicData.endDate),
+      published: false,
+      questionVoList: this.questions.map(q => ({
+        quizId: this.surveyIdToEdit, // 每個問題也要帶上所屬問卷 ID
+        questionId: q.questionId || 1, // 如果是原本就有的題目，必須帶上 ID；如果是編輯時新增的題目，給 0
+        question: q.question,
+        type: q.type,
+        required: q.required,
+        optionsList: q.optionsList || []
+      }))
+    };
+
+
+    // 2. 如果是編輯模式，加上 ID
     if (this.isEditMode && this.surveyIdToEdit) {
-      // **編輯模式：更新現有問卷**
-      const updatedSurvey: FullSurvey = {
-        ...this.currentSurveyData, // 保留原有的 ID 和狀態等
-        name: basicData.name,
-        description: basicData.description,
-        startDate: basicData.startDate.toISOString().split('T')[0],
-        endDate: basicData.endDate.toISOString().split('T')[0],
-        questions: this.questions // 替換為修改後的題目
-      };
-
-      this.questionnaireService.updateSurvey(updatedSurvey); // Service 中需要新增此方法
-      Swal.fire({
-        title: "問卷修改成功！",
-        icon: "success",
-        timer: 1200,
-        showConfirmButton: false
-      });
-    } else {
-      // 組合完整的 Survey 物件
-      // 這裡我們模擬 ID 和 Status 的生成
-      const newSurvey: FullSurvey = {
-        id: Math.floor(Math.random() * 1000) + 16, // 臨時生成一個 ID
-        name: basicData.name,
-        description: basicData.description,
-        startDate: basicData.startDate.toISOString().split('T')[0], // 格式化日期
-        endDate: basicData.endDate.toISOString().split('T')[0],   // 格式化日期
-        status: '尚未開始', // 預設新建立的問卷狀態
-        questions: this.questions
-      };
-
-      // 呼叫 Service 進行儲存
-      this.questionnaireService.addSurvey(newSurvey);
-
-      Swal.fire({
-        title: "問卷新增成功！",
-        icon: "success",
-        timer: 1200,
-        showConfirmButton: false
-      });
+      payload.id = this.surveyIdToEdit;
     }
-    setTimeout(() => {
-      this.toList();
-    }, 1300);
+
+    // 3. 呼叫 Service (此時就不會報錯，因為參數型別已對齊)
+    const request$ = this.isEditMode
+      ? this.questionnaireService.updateSurvey(payload)
+      : this.questionnaireService.createQuiz(payload);
+
+    request$.subscribe({
+      next: (res) => {
+        if (res.code === 200) {
+          Swal.fire({ title: this.isEditMode ? "修改成功！" : "新增成功！", icon: "success", timer: 1200 });
+          setTimeout(() => this.toList(), 1300);
+        } else {
+          Swal.fire("錯誤", res.message, "error");
+          console.log(JSON.stringify(payload));
+        }
+      },
+      error: (err) => {
+        Swal.fire("錯誤", "與伺服器失敗", "error")
+        console.log(err);
+      }
+    });
   }
 }
 

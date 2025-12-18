@@ -1,4 +1,4 @@
-import { ReviewDraft, FullSurvey } from './../@interfaces/list-item';
+import { ReviewDraft, FullSurvey, Question } from './../@interfaces/list-item';
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from "@angular/router";
 import { QuestionnaireService } from '../@services/questionnaire.service';
@@ -14,77 +14,67 @@ import { FormsModule } from '@angular/forms';
 })
 export class QuestionFormComponent {
 
+  questions: Question[] = [];
+
   // 存放從 Service 載入的問卷資料型態
   surveyData: FullSurvey | null = null;
 
   // 新增答案數據模型，用於雙向綁定
   userAnswers: Record<string, any> = {};
 
-  constructor(private route: ActivatedRoute, private router: Router, private questionnaireService: QuestionnaireService) { }
+  constructor(private route: ActivatedRoute, private router: Router, private questionList: QuestionnaireService) { }
 
   ngOnInit(): void {
+    const quizId = Number(this.route.snapshot.paramMap.get('id'));
 
-    // 1. 統一的資料載入邏輯：處理路由 ID 變更並從 Service 獲取數據
-    this.route.params.pipe(
-      // 當路由參數改變時，切換到新的 Service 請求
-      switchMap(params => {
-        const surveyId = +params['id']; // 將路由參數（字串）轉換為數字
+    if (quizId) {
+      // 步驟 1: 取得問卷基本資訊 (標題、描述、日期)
+      this.questionList.getSurveyById(quizId).subscribe(survey => {
+        if (survey) {
+          this.surveyData = survey; // 賦值給 surveyData，解鎖 HTML 顯示
 
-        // 檢查草稿數據 (如果草稿存在且ID匹配，我們假設草稿處理會覆蓋初始值)
-        const draft = this.questionnaireService.getDraftData();
-        if (draft && draft.surveyId === surveyId) {
-          console.log(`問卷 ID ${surveyId} 載入成功，發現草稿。`);
-        } else {
-          console.log(`問卷 ID ${surveyId} 載入成功，無草稿。`);
+          // 步驟 2: 取得該問卷的問題列表
+          this.questionList.getQuestionsByQuizId(quizId).subscribe(data => {
+            this.questions = data;
+
+            // 步驟 3: 將問題列表封裝進一個臨時物件，傳給初始化方法
+            // 因為你的 initializeUserAnswers 需要 FullSurvey 結構
+            const surveyForInit: FullSurvey = {
+              ...survey,
+              questions: data
+            };
+
+            this.initializeUserAnswers(surveyForInit);
+          });
         }
-
-        // 呼叫 Service 的方法，它返回一個 Observable
-        return this.questionnaireService.getSurveyById(surveyId);
-      })
-    ).subscribe({ //使用單一物件訂閱 (Next/Error 處理)
-      // 2. 訂閱：接收 Service 返回的【實際 FullSurvey 資料】
-      next: (data: FullSurvey | undefined) => {
-        if (data) {
-          this.surveyData = data; // 成功取得資料，賦值給 Component 屬性
-
-          // 初始化 userAnswers 結構並載入草稿
-          this.initializeUserAnswers(data);
-
-        } else {
-          // 找不到資料時的錯誤處理
-          const currentId = +this.route.snapshot.params['id'];
-          console.error(`找不到對應的問卷資料！ID: ${currentId}`);
-          alert(`問卷 ID ${currentId} 不存在。將導回列表。`);
-          this.router.navigate(['/list']);
-        }
-      },
-      error: (error) => {
-        console.error('載入問卷時發生錯誤:', error);
-      }
-    });
+      });
+    }
   }
 
   /**
  * 初始化 userAnswers 物件，並從草稿中載入數據
  */
   private initializeUserAnswers(survey: FullSurvey): void {
-    const draft = this.questionnaireService.getDraftData();
+    const draft = this.questionList.getDraftData();
     const answers: Record<string, any> = {};
 
-    survey.questions.forEach(question => {
-      const questionId = question.id.toString();
-      const savedAnswer = draft?.answers ? draft.answers[questionId] : null;
+    // 確保 survey.questions 存在才進行迴圈
+    if (survey.questions) {
+      survey.questions.forEach(question => {
+        // 注意：後端 API 回傳的是 questionId
+        const qId = question.questionId.toString();
+        const savedAnswer = draft?.answers ? draft.answers[qId] : null;
 
-      let initialValue;
-      if (savedAnswer !== null) {
-        initialValue = savedAnswer;
-      } else {
-        // 如果是 multiple 類型，初始化為空陣列 []
-        initialValue = (question.type === 'multiple' ? [] : '');
-      }
+        let initialValue;
+        if (savedAnswer !== null) {
+          initialValue = savedAnswer;
+        } else {
+          initialValue = (question.type === 'multiple' ? [] : '');
+        }
 
-      answers[questionId] = initialValue;
-    });
+        answers[qId] = initialValue;
+      });
+    }
 
     this.userAnswers = answers;
     console.log('答案結構初始化完成:', this.userAnswers);
@@ -128,7 +118,7 @@ export class QuestionFormComponent {
       lastSaved: new Date(),
     };
 
-    this.questionnaireService.setDraftData(draftData);
+    this.questionList.setDraftData(draftData);
     this.router.navigateByUrl('/review');
   }
 

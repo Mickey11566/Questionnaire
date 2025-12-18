@@ -14,15 +14,31 @@ export interface ListItem {
 // 2. 題目結構 (用於定義問卷內容)
 // -----------------------------------------------------------
 
-// 定義單個問卷題目的介面
-export interface Question {
-  id: number; // 題目 ID (在單一問卷內唯一)
-  text: string; // 題目內容
-  type: 'single' | 'multiple' | 'short-answer'; // 題目類型
-  required: boolean; // 是否必填
-  options?: string[]; // 選項 (適用於多選和單選)
+export interface QuestionOption {
+  code: number;
+  optionName: string;
 }
 
+// 定義單個問卷題目的介面
+export interface Question {
+  quizId: number;
+  questionId: number;
+  question: string;
+  type: 'single' | 'multiple' | 'short-answer'; // 題目類型
+  required: boolean; // 是否必填
+  optionsList: QuestionOption[];
+}
+
+// 對齊後端
+export interface QuizRequest {
+  id?: number;
+  title: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  published: boolean;
+  questionVoList: any[];
+}
 
 // -----------------------------------------------------------
 // 3. 完整的問卷定義 (包含基本資訊和題目列表)

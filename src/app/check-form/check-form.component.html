@@ -17,48 +17,49 @@
 
   <div class="formContent">
 
-    @if (surveyData.questions && surveyData.questions.length > 0) {
-    <div class="question-list">
+    @if (questions && questions.length > 0) {
+    <div class="q-list">
 
-      @for (question of surveyData.questions; track question.id; let i = $index) {
-      <div class="question-item" style="
+      @for (q of questions; track q.questionId; let i = $index) {
+      <div class="q-item" style="
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 1vh;">
+        gap: 1vh;
+        margin-bottom: 30px;">
 
         <h2>
-          Q{{i + 1}}. {{question.text}}
-          @if (question.required) {
+          Q{{i + 1}}. {{q.question}}
+          @if (q.required) {
           <span style="color: red;">*</span>
           }
         </h2>
 
-        @switch (question.type) {
+        @switch (q.type) {
 
         @case ('single') {
-        @for (option of question.options; track option) {
+        @for (option of q.optionsList; track option.code) {
         <div class="option">
-          <input disabled type="radio" [id]="'q' + question.id + 'opt' + option" [name]="question.id.toString()">
-          <label [for]="'q' + question.id + 'opt' + option">{{option}}</label>
+          <input disabled type="radio" [id]="'q' + q.questionId + 'opt' + option.code" [name]="q.questionId.toString()">
+          <label [for]="'q' + q.questionId + 'opt' + option.code">{{ option.optionName }}</label>
         </div>
         }
         }
 
         @case ('multiple') {
-        @for (option of question.options; track option) {
+        @for (option of q.optionsList; track option.code) {
         <div class="option">
-          <input disabled type="checkbox" [id]="'q' + question.id + 'opt' + option" [name]="question.id.toString()"
-            [value]="option">
-
-          <label [for]="'q' + question.id + 'opt' + option">{{option}}</label>
+          <input disabled type="checkbox" [id]="'q' + q.questionId + 'opt' + option.code"
+            [name]="q.questionId.toString()" [value]="option.optionName">
+          <label [for]="'q' + q.questionId + 'opt' + option.code">{{ option.optionName }}</label>
         </div>
         }
         }
 
         @case ('short-answer') {
-        <textarea disabled style="resize: none; border-radius: 4px; font-size: 1rem; font-weight: 700;" rows="4"
-          cols="30" maxlength="100" placeholder="請在此輸入您的回答..."></textarea>
+        <textarea disabled
+          style="resize: none; border-radius: 4px; font-size: 1rem; font-weight: 700; background-color: #f9f9f9;"
+          rows="4" cols="30" placeholder="簡答題內容顯示..."></textarea>
         }
 
         @default {
@@ -70,13 +71,16 @@
       }
     </div>
     } @else {
-    <p>此問卷目前沒有任何問題。</p>
+    <div style="text-align: center; padding: 20px;">
+      <p>此問卷目前沒有任何問題。</p>
+    </div>
     }
-
 
   </div>
 </main>
 }
+
+<button class="cancleBtn" (click)="backToList()">關閉預覽並返回</button>
 
 <nav class="navBar">
   <ul>

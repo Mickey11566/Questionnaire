@@ -42,29 +42,32 @@ export class ReviewComponent {
     this.draftData = this.questionnaireService.getDraftData();
 
     if (!this.draftData) {
-      // 如果沒有草稿數據，導回列表
-      console.warn('未找到草稿數據，導回列表。');
       this.router.navigate(['/list']);
       return;
     }
 
-    // 呼叫 Service 獲取完整的問卷結構，以便將答案與問題文本匹配
-    this.questionnaireService.getSurveyById(this.draftData.surveyId).subscribe({
-      next: (data: FullSurvey | undefined) => {
-        if (data) {
-          this.surveyData = data;
-          this.mapAnswersToQuestions(data, this.draftData!.answers);
-        } else {
-          console.error('無法載入問卷結構！');
-          this.router.navigate(['/list']);
-        }
-      },
-      error: (err) => {
-        console.error('載入問卷結構失敗:', err);
+    const quizId = this.draftData.surveyId;
+
+    // 1. 同時獲取問卷資訊與問題列表
+    this.questionnaireService.getSurveyById(quizId).subscribe(survey => {
+      if (survey) {
+        this.surveyData = survey;
+
+        // 2. 必須再抓一次問題列表，否則 survey.questions 可能是空的
+        this.questionnaireService.getQuestionsByQuizId(quizId).subscribe(questions => {
+          // 將問題裝進 surveyData 供 mapAnswersToQuestions 使用
+          this.surveyData!.questions = questions;
+
+          if (this.draftData) {
+            this.mapAnswersToQuestions(this.surveyData!, this.draftData.answers);
+          }
+        });
+      } else {
         this.router.navigate(['/list']);
       }
     });
   }
+
   /**
      * 將用戶的答案 (questionId: answer) 與完整的問題文本 (FullSurvey) 進行匹配
      * @param survey 完整的問卷結構
@@ -74,20 +77,22 @@ export class ReviewComponent {
     const list: ReviewItem[] = [];
 
     survey.questions.forEach((question: Question) => {
-      const questionId = question.id.toString();
-      const rawAnswer = answers[questionId];
+      const qId = question.questionId.toString();
+      const rawAnswer = answers[qId];
 
-      let displayAnswer: any;
+      let displayAnswer: string;
 
-      // 格式化答案以供顯示 (例如，將陣列轉換為逗號分隔的字串)
       if (question.type === 'multiple' && Array.isArray(rawAnswer)) {
-        displayAnswer = rawAnswer.join(', ');
+        // 複選：['選項A', '選項B'] -> "選項A, 選項B"
+        displayAnswer = rawAnswer.length > 0 ? rawAnswer.join(', ') : '未填寫';
+      } else if (rawAnswer === '' || rawAnswer === null || rawAnswer === undefined) {
+        displayAnswer = '未填寫';
       } else {
-        displayAnswer = rawAnswer || '未填寫';
+        displayAnswer = rawAnswer.toString();
       }
 
       list.push({
-        questionText: question.text,
+        questionText: question.question, // 對應後端欄位 question
         questionType: question.type,
         userAnswer: displayAnswer
       });
@@ -111,42 +116,51 @@ export class ReviewComponent {
   /**
    * 最終提交表單
    */
+  // review.component.ts
+
   submitForm(): void {
     if (!this.draftData || !this.surveyData) {
       alert('資料不完整，無法提交。');
       return;
     }
 
-    // 1. 將 answers: Record<string, any> 轉換為 FormResponse 要求的結構
-    const userAnswers: FormResponse['answers'] = [];
-    for (const id in this.draftData.answers) {
-      if (this.draftData.answers.hasOwnProperty(id)) {
-        userAnswers.push({
-          questionId: parseInt(id, 10), // 轉換為數字
-          answer: this.draftData.answers[id]
-        });
-      }
-    }
+    // 1. 格式化資料：將 Record<string, any> 轉為後端要求的 Vo 結構
+    // 假設後端接收的答案欄位叫 answerVoList
+    const answerVoList = Object.keys(this.draftData.answers).map(qId => {
+      const val = this.draftData!.answers[qId];
+      return {
+        questionId: parseInt(qId, 10),
+        // 如果是多選(陣列)，轉為字串（例如 "選項A,選項B"）或依後端要求處理
+        answer: Array.isArray(val) ? val.join(',') : val.toString()
+      };
+    });
 
-    const response: FormResponse = {
-      surveyId: this.draftData.surveyId,
-      answers: userAnswers,
-      submittedAt: new Date()
-      // 可以在這裡添加其他提交資訊
+    // 2. 組合成最終要傳給 API 的 Payload
+    const payload = {
+      quizId: this.draftData.surveyId,
+      answerVoList: answerVoList
     };
 
-    console.log('問卷提交數據:', response);
+    console.log('準備提交的數據：', payload);
 
-    // 3. 提交成功後的關鍵步驟：清除草稿並導航
-    this.questionnaireService.clearDraftData();
+    // 3. 執行提交
+    this.questionnaireService.submitSurvey(payload).subscribe({
+      next: (res) => {
+        if (res.code === 200) {
+          Swal.fire({ title: "問卷提交成功！", icon: "success", timer: 1500 });
 
-    // 顯示成功訊息 (可選)
-    Swal.fire({ title: "問卷提交成功！", icon: "success", timer: 1500, showConfirmButton: false });
-    setTimeout(() => {
+          // 4. 清除暫存並返回列表
+          this.questionnaireService.clearDraftData();
+          this.router.navigate(['/list']);
+        } else {
+          Swal.fire({ title: "提交失敗！", text: res.message, icon: "error", timer: 1500 });
+        }
+      },
+      error: (err) => {
+        Swal.fire({ title: "提交失敗！", text: "伺服器連線失敗，請稍後再試。", icon: "error", timer: 1500 });
 
-      // 導航到成功頁面或列表頁
-      this.router.navigate(['/list']);
-    }, 1500);
+      }
+    });
   }
 
 }

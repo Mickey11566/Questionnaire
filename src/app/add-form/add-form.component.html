@@ -69,7 +69,7 @@
       </div>
     </form>
     }
-    <!-- 設定問卷區塊 -->
+
     @if (currentStep === 'settings') {
     <div class="form settings-content"
       style="overflow-x: hidden; overflow-y: hidden; max-height: calc(90vh - 100px); flex-grow: 1;">
@@ -96,7 +96,7 @@
       }
 
       <div class="question-list">
-        @for (q of questions; track q.id; let i = $index) {
+        @for (q of questions; track q.questionId; let i = $index) {
         <div class="question-card">
           <div class="question-header">
             <span class="question-index">問題 {{ i + 1 }}</span>
@@ -112,25 +112,25 @@
 
             <mat-checkbox [(ngModel)]="q.required" style="margin-left: 1.5vw;">必填</mat-checkbox>
 
-            <button mat-icon-button color="warn" (click)="deleteQuestion(q.id)" style="margin-left: 0.5vw;">
+            <button mat-icon-button color="warn" (click)="deleteQuestion(q.questionId)" style="margin-left: 0.5vw;">
               <mat-icon>delete_forever</mat-icon>
             </button>
           </div>
 
           <mat-form-field appearance="outline" style="width: 100%; margin-top: 2vh;">
             <mat-label>輸入問題內容</mat-label>
-            <input matInput [(ngModel)]="q.text" placeholder="例如：您最喜歡的顏色是？">
+            <input matInput [(ngModel)]="q.question" placeholder="例如：您對公司的整體工作環境滿意嗎？">
           </mat-form-field>
 
           @if (q.type === 'single' || q.type === 'multiple') {
           <div class="options-container">
-            @for (option of q.options; track $index; let j = $index) {
+            @for (option of q.optionsList; track $index; let j = $index) {
             <div class="option-row">
               <mat-icon style="margin-right: 1vw;">
                 {{ q.type === 'single' ? 'radio_button_unchecked' : 'check_box_outline_blank' }}
               </mat-icon>
               <mat-form-field appearance="outline" style="flex-grow: 1;">
-                <input matInput [(ngModel)]="q.options![j]" placeholder="選項內容">
+                <input matInput [(ngModel)]="option.optionName" placeholder="選項內容">
               </mat-form-field>
               <button mat-icon-button (click)="deleteOption(q, j)">
                 <mat-icon>close</mat-icon>
@@ -167,33 +167,33 @@
       <mat-divider></mat-divider>
 
       <div class="question-preview-list" style="margin-top: 20px;">
-        @for (q of questions; track q.id; let i = $index) {
+        @for (q of questions; track q.questionId; let i = $index) {
         <div class="preview-question-item" style="margin-bottom: 25px; padding: 10px; border-left: 3px solid #d5a972;">
 
           <p style="font-weight: 600; font-size: 16px; color: #333;">
-            {{ i + 1 }}. {{ q.text }}
+            {{ i + 1 }}. {{ q.question }}
             @if (q.required) {
             <span style="color: red; margin-left: 5px;">*</span>
             }
           </p>
 
           @if (q.type === 'single') {
-          @for (option of q.options; track $index) {
+          @for (option of q.optionsList; track option.code) {
           <mat-radio-button [disabled]="true" style="display: block; margin: 8px 0;">
-            {{ option }}
+            {{ option.optionName }}
           </mat-radio-button>
           }
           }
           @else if (q.type === 'multiple') {
-          @for (option of q.options; track $index) {
+          @for (option of q.optionsList; track option.code) {
           <mat-checkbox [disabled]="true" style="display: block; margin: 8px 0;">
-            {{ option }}
+            {{ option.optionName }}
           </mat-checkbox>
           }
           }
           @else if (q.type === 'short-answer') {
           <mat-form-field appearance="outline" style="width: 100%;">
-            <input matInput placeholder="簡答..." [disabled]="true">
+            <input matInput placeholder="簡答預覽內容..." [disabled]="true">
           </mat-form-field>
           }
         </div>
@@ -214,12 +214,6 @@
 </main>
 
 <nav class="navBar">
-
-  <!-- <button>
-  </button>
-  <button>
-    <mat-icon aria-hidden="false" aria-label="logout icon" fontIcon="logout"></mat-icon>
-  </button> -->
   <ul>
     <li (click)="toList()" style="--i:#FF9966;--j:#FF5E62">
       <span class="icon"> <mat-icon aria-hidden="false" aria-label="format_list_bulleted icon"

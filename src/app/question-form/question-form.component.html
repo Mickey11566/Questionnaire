@@ -16,19 +16,19 @@
   </div>
 
   <div class="formContent">
-
-    @if (surveyData.questions && surveyData.questions.length > 0) {
+    @if (questions && questions.length > 0) {
     <div class="question-list">
 
-      @for (question of surveyData.questions; track question.id; let i = $index) {
+      @for (question of questions; track question.questionId; let i = $index) {
       <div class="question-item" style="
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 1vh;">
+        gap: 1vh;
+        margin-bottom: 2rem;">
 
         <h2>
-          Q{{i + 1}}. {{question.text}}
+          Q{{i + 1}}. {{question.question}}
           @if (question.required) {
           <span style="color: red;">*</span>
           }
@@ -37,29 +37,31 @@
         @switch (question.type) {
 
         @case ('single') {
-        @for (option of question.options; track option) {
+        @for (option of question.optionsList; track option.code) {
         <div class="option">
-          <input type="radio" [id]="'q' + question.id + 'opt' + option" [name]="question.id.toString()"
-            [(ngModel)]="userAnswers[question.id.toString()]" [value]="option" [required]="question.required">
-          <label [for]="'q' + question.id + 'opt' + option">{{option}}</label>
+          <input type="radio" [id]="'q' + question.questionId + 'opt' + option.code"
+            [name]="question.questionId.toString()" [(ngModel)]="userAnswers[question.questionId.toString()]"
+            [value]="option.optionName" [required]="question.required">
+          <label [for]="'q' + question.questionId + 'opt' + option.code">{{option.optionName}}</label>
         </div>
         }
         }
 
         @case ('multiple') {
-        @for (option of question.options; track option) {
+        @for (option of question.optionsList; track option.code) {
         <div class="option">
-          <input type="checkbox" [id]="'q' + question.id + 'opt' + option" [name]="question.id.toString()"
-            [value]="option" [checked]="userAnswers[question.id.toString()]?.includes(option)"
-            (change)="onCheckboxChange(question.id.toString(), option, $event)" [required]="question.required">
+          <input type="checkbox" [id]="'q' + question.questionId + 'opt' + option.code"
+            [name]="question.questionId.toString()" [value]="option.optionName"
+            [checked]="userAnswers[question.questionId.toString()]?.includes(option.optionName)"
+            (change)="onCheckboxChange(question.questionId.toString(), option.optionName, $event)">
 
-          <label [for]="'q' + question.id + 'opt' + option">{{option}}</label>
+          <label [for]="'q' + question.questionId + 'opt' + option.code">{{option.optionName}}</label>
         </div>
         }
         }
 
         @case ('short-answer') {
-        <textarea [(ngModel)]="userAnswers[question.id.toString()]" [name]="question.id.toString()"
+        <textarea [(ngModel)]="userAnswers[question.questionId.toString()]" [name]="question.questionId.toString()"
           [required]="question.required" style="resize: none; border-radius: 4px; font-size: 1rem; font-weight: 700;"
           rows="4" cols="30" maxlength="100" placeholder="請在此輸入您的回答..."></textarea>
         }
@@ -68,7 +70,6 @@
         <p>無法識別的問題類型。</p>
         }
         }
-
       </div>
       }
     </div>
@@ -76,14 +77,14 @@
     <p>此問卷目前沒有任何問題。</p>
     }
 
-
     <div class="formButton">
       <button class="cancleBtn" (click)="backList()">返回</button>
-
       <button class="reviewBtn" (click)="previewForm()">預覽</button>
     </div>
   </div>
 </main>
 } @else {
-<p>正在載入問卷資料...</p>
+<div class="loading-state">
+  <p>正在載入問卷資料...</p>
+</div>
 }
