@@ -62,8 +62,9 @@
 
         @case ('short-answer') {
         <textarea [(ngModel)]="userAnswers[question.questionId.toString()]" [name]="question.questionId.toString()"
-          [required]="question.required" style="resize: none; border-radius: 4px; font-size: 1rem; font-weight: 700;"
-          rows="4" cols="30" maxlength="100" placeholder="請在此輸入您的回答..."></textarea>
+          [required]="question.required"
+          style="resize: none;padding: 1vh 1vw; border-radius: 4px; font-size: 1rem; font-weight: 700;" rows="5"
+          cols="50" maxlength="100" placeholder="請在此輸入您的回答..."></textarea>
         }
 
         @default {

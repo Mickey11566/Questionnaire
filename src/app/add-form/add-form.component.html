@@ -39,7 +39,8 @@
         <mat-label>問卷內容描述</mat-label>
       </h3>
       <mat-form-field style="width: 100%;" class="example-full-width">
-        <textarea maxlength="100" rows="4" matInput placeholder="輸入問卷描述" formControlName="description"></textarea>
+        <textarea style="resize: none;" maxlength="100" rows="4" matInput placeholder="輸入問卷描述"
+          formControlName="description"></textarea>
         @if (basicForm.controls['description'].hasError('required') && basicForm.controls['description'].touched) {
         <mat-error>問卷內容描述為必填項目。</mat-error>
         }

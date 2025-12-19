@@ -3,7 +3,7 @@
   @if (surveyData) {
   <div class="header">
     <h1>{{surveyData.name}}</h1>
-    <p>{{surveyData.description}}</p>
+    <h3>{{surveyData.description}}</h3>
   </div>
 
   <div class="review-list">
@@ -11,13 +11,13 @@
     <div class="review-item">
 
       <div class="question-title">
-        <strong>Q{{$index + 1}}. {{item.questionText}}</strong>
+        <h2>Q{{$index + 1}}. {{item.questionText}}</h2>
       </div>
 
       <div class="user-answer">
-        <blockquote [ngClass]="{'not-answered': item.userAnswer === '未填寫'}">
+        <h3 [ngClass]="{'not-answered': item.userAnswer === '未填寫'}">
           {{item.userAnswer}}
-        </blockquote>
+        </h3>
       </div>
 
     </div>
