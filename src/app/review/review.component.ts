@@ -116,13 +116,9 @@ export class ReviewComponent {
   /**
    * 最終提交表單
    */
-  // review.component.ts
-
-  // review.component.ts
-
   submitForm(): void {
     if (!this.draftData || !this.surveyData) {
-      alert('資料不完整，無法提交。');
+      Swal.fire("提交失敗", "error");
       return;
     }
 
@@ -140,15 +136,15 @@ export class ReviewComponent {
         answerVoList = question.optionsList
           .filter(opt => selectedOptions.includes(opt.optionName))
           .map(opt => ({
-            check: qId, // 根據範例，check 似乎是放 questionId
+            check: true, // 根據範例，check 似乎是放 questionId
             code: opt.code,
             optionName: opt.optionName
           }));
       } else if (question.type === 'short-answer') {
         // 簡答題通常 code 為 0 或不傳，optionName 放填寫的文字
         answerVoList = [{
-          check: qId,
-          code: 0,
+          check: true,
+          code: 1,
           optionName: userAnswer || ''
         }];
       }
@@ -162,7 +158,7 @@ export class ReviewComponent {
     // 2. 組成最終 Payload
     const payload = {
       quizId: this.draftData.surveyId,
-      email: "tes@gmail.com", // 這裡建議從 Service 拿取使用者當初輸入的 email
+      // email: this.draftData.email || "test@gmail.com",
       answersList: answersList
     };
 
