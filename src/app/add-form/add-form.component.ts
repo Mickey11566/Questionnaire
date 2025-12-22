@@ -11,10 +11,10 @@ import { FormBuilder, FormGroup, FormsModule, Validators, ReactiveFormsModule } 
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 
-import { MatButtonModule } from '@angular/material/button'; // <-- 新增
-import { MatSelectModule } from '@angular/material/select'; // <-- 新增
-import { MatCheckboxModule } from '@angular/material/checkbox'; // <-- 新增
-import { MatDividerModule } from '@angular/material/divider'; // <-- 新增
+import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDividerModule } from '@angular/material/divider';
 import { Question, FullSurvey } from '../@interfaces/list-item';
 
 
@@ -119,19 +119,18 @@ export class AddFormComponent {
     this.basicForm.patchValue({
       name: survey.name,
       description: survey.description,
-      // 注意：如果您使用 Mat Date Range Picker，日期類型可能需要轉換
       startDate: new Date(survey.startDate),
       endDate: new Date(survey.endDate)
     });
 
     // 載入題目陣列
-    // 必須深層複製題目，避免直接修改 Service 裡面的資料
+    // 需複製題目，避免直接修改 Service 裡面的資料
     this.questions = JSON.parse(JSON.stringify(survey.questions));
 
     // 確保載入的題目 ID 也是正確的
     this.questions = this.questions.map(q => ({
       ...q,
-      // 防呆：如果後端給的 questionId 剛好是 0，強制轉為 1 (或依需求處理)
+      // 如果後端給的 questionId 剛好是 0，強制轉為 1 (或依需求處理)
       questionId: q.questionId === 0 ? 1 : q.questionId
     }));
   }
@@ -182,8 +181,6 @@ export class AddFormComponent {
     this.router.navigateByUrl("login");
   }
 
-  // --- 題目操作方法 (與前次提供的一致) ---
-
   // 題目操作方法修改
   addQuestion(type: 'single' | 'multiple' | 'short-answer'): void {
 
@@ -194,10 +191,10 @@ export class AddFormComponent {
     const newQuestion: any = {
       questionId: maxId + 1,
       quizId: this.surveyIdToEdit || 0,
-      question: `新問題內容`, // 原本是 text
+      question: `新問題內容`, // 原為 text
       type: type,
       required: false,
-      // 後端要求 optionsList 即使是空也要是 []
+      // 後端 optionsList 即使是空也要是 []
       optionsList: type !== 'short-answer' ? [
         { code: 1, optionName: '選項一' },
         { code: 2, optionName: '選項二' }
@@ -249,15 +246,15 @@ export class AddFormComponent {
 
     // 1. 建立符合 API 規格的物件
     const payload: any = {
-      quizId: this.surveyIdToEdit, // 修改模式的核心：告訴後端是哪一份問卷
+      quizId: this.surveyIdToEdit, // 告訴後端是哪一份問卷
       title: basicData.name,
       description: basicData.description,
       startDate: this.getLocalDateString(basicData.startDate),
       endDate: this.getLocalDateString(basicData.endDate),
       published: false,
       questionVoList: this.questions.map(q => ({
-        quizId: this.surveyIdToEdit, // 每個問題也要帶上所屬問卷 ID
-        questionId: q.questionId || 1, // 如果是原本就有的題目，必須帶上 ID；如果是編輯時新增的題目，給 0
+        quizId: this.surveyIdToEdit, // 每個問題要帶上所屬問卷 ID
+        questionId: q.questionId || 1, // 如果是原本就有的題目，必須帶上 ID；如果是編輯時新增的題目，給 1
         question: q.question,
         type: q.type,
         required: q.required,
@@ -271,7 +268,7 @@ export class AddFormComponent {
       payload.id = this.surveyIdToEdit;
     }
 
-    // 3. 呼叫 Service (此時就不會報錯，因為參數型別已對齊)
+    // 3. 呼叫 Service
     const request$ = this.isEditMode
       ? this.questionnaireService.updateSurvey(payload)
       : this.questionnaireService.createQuiz(payload);

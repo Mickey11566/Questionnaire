@@ -142,7 +142,6 @@ export class QuestionnaireService {
    * 用於：【新增問卷】
    * @param newSurvey 完整的問卷結構
    */
-  // questionnaire.service.ts
 
   createQuiz(payload: QuizRequest): Observable<any> {
     return this.http.post<any>('http://localhost:8080/quiz/create', payload);
@@ -178,9 +177,9 @@ export class QuestionnaireService {
    * @param payload 包含 quizId 與答案列表的物件
    */
   submitSurvey(payload: any): Observable<any> {
-    const url = 'http://localhost:8080/quiz/submit'; // 請根據你後端實際的 API 路徑修改
+    const url = 'http://localhost:8080/quiz/fillin';
 
-    // 這裡通常不需要 pipe(map)，直接回傳 Observable 讓 Component 處理訂閱結果即可
+    // 直接回傳 Observable 讓 Component 處理訂閱結果即可
     return this.http.post<any>(url, payload);
   }
 

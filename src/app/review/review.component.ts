@@ -32,7 +32,7 @@ export class ReviewComponent {
   public surveyReviewData: any | undefined;
   public reviewQuestions: ReviewQuestion[] = [];
 
-  private userResponse: FormResponse | undefined;
+  // private userResponse: FormResponse | undefined;
 
   // 導航到 Review 路由
   // 新增一個專門的 Review 頁面路由，並從服務中取出暫存的資料。
@@ -118,48 +118,68 @@ export class ReviewComponent {
    */
   // review.component.ts
 
+  // review.component.ts
+
   submitForm(): void {
     if (!this.draftData || !this.surveyData) {
       alert('資料不完整，無法提交。');
       return;
     }
 
-    // 1. 格式化資料：將 Record<string, any> 轉為後端要求的 Vo 結構
-    // 假設後端接收的答案欄位叫 answerVoList
-    const answerVoList = Object.keys(this.draftData.answers).map(qId => {
-      const val = this.draftData!.answers[qId];
+    // 1. 轉換答案格式
+    const answersList = this.surveyData.questions.map(question => {
+      const qId = question.questionId;
+      const userAnswer = this.draftData!.answers[qId.toString()]; // 拿到使用者填寫的內容
+
+      let answerVoList: any[] = [];
+
+      // 根據題目類型尋找匹配的選項物件
+      if (question.type === 'single' || question.type === 'multiple') {
+        const selectedOptions = Array.isArray(userAnswer) ? userAnswer : [userAnswer];
+
+        answerVoList = question.optionsList
+          .filter(opt => selectedOptions.includes(opt.optionName))
+          .map(opt => ({
+            check: qId, // 根據範例，check 似乎是放 questionId
+            code: opt.code,
+            optionName: opt.optionName
+          }));
+      } else if (question.type === 'short-answer') {
+        // 簡答題通常 code 為 0 或不傳，optionName 放填寫的文字
+        answerVoList = [{
+          check: qId,
+          code: 0,
+          optionName: userAnswer || ''
+        }];
+      }
+
       return {
-        questionId: parseInt(qId, 10),
-        // 如果是多選(陣列)，轉為字串（例如 "選項A,選項B"）或依後端要求處理
-        answer: Array.isArray(val) ? val.join(',') : val.toString()
+        questionId: qId,
+        answerVoList: answerVoList
       };
     });
 
-    // 2. 組合成最終要傳給 API 的 Payload
+    // 2. 組成最終 Payload
     const payload = {
       quizId: this.draftData.surveyId,
-      answerVoList: answerVoList
+      email: "tes@gmail.com", // 這裡建議從 Service 拿取使用者當初輸入的 email
+      answersList: answersList
     };
 
-    console.log('準備提交的數據：', payload);
+    console.log('提交填寫數據:', payload);
 
-    // 3. 執行提交
+    // 3. 呼叫 API
     this.questionnaireService.submitSurvey(payload).subscribe({
       next: (res) => {
         if (res.code === 200) {
-          Swal.fire({ title: "問卷提交成功！", icon: "success", timer: 1500 });
-
-          // 4. 清除暫存並返回列表
+          Swal.fire({ title: "提交成功！", icon: "success", timer: 1500 });
           this.questionnaireService.clearDraftData();
           this.router.navigate(['/list']);
         } else {
-          Swal.fire({ title: "提交失敗！", text: res.message, icon: "error", timer: 1500 });
+          Swal.fire("提交失敗", res.message, "error");
         }
       },
-      error: (err) => {
-        Swal.fire({ title: "提交失敗！", text: "伺服器連線失敗，請稍後再試。", icon: "error", timer: 1500 });
-
-      }
+      error: (err) => Swal.fire("錯誤", "連線失敗", "error")
     });
   }
 
