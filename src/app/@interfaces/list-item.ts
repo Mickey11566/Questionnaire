@@ -84,3 +84,24 @@ export interface FormResponse {
   answers: UserAnswer[];
   submittedAt?: Date; // 提交時間
 }
+
+
+
+// -----------------------------------------------------------
+// 5. 統計問卷結果
+// -----------------------------------------------------------
+export interface ChartResult {
+  label: string;
+  count: number;
+}
+
+export interface TextResult {
+  content: string;
+}
+
+export interface StatisticItem {
+  questionId: number;
+  questionName: string;
+  type: 'single' | 'multiple' | 'short-answer';
+  results: (ChartResult | TextResult)[]; // 這裡允許兩種類型並存
+}

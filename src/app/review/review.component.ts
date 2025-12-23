@@ -158,7 +158,7 @@ export class ReviewComponent {
     // 2. 組成最終 Payload
     const payload = {
       quizId: this.draftData.surveyId,
-      // email: this.draftData.email || "test@gmail.com",
+      email: "test@gmail.com", //this.draftData.email ||
       answersList: answersList
     };
 

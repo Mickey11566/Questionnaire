@@ -1,28 +1,85 @@
-<main>
+<div class="result-page">
+  <header class="result-header">
+    <h1>問卷統計：{{ surveyTitle }}</h1>
+    <div class="tab-switcher">
+      <button [class.active]="activeTab() === 'list'" (click)="switchTab('list')">問卷回覆列表</button>
+      <button [class.active]="activeTab() === 'chart'" (click)="switchTab('chart')">統計結果圖表</button>
+    </div>
+  </header>
 
-  <h2>測試表單</h2>
-  <p>這是測試表單這是測試表單這是測試表單這是測試表單這是測試表單這是測試表單</p>
-  <div class="resultContainer">
-    <div>
-      <canvas id="chart"></canvas>
-    </div>
-    <div class="formAnswer">
-      <mat-accordion style="width: 300px">
-        <mat-expansion-panel (opened)="panelOpenState.set(true)" (closed)="panelOpenState.set(false)">
-          <mat-expansion-panel-header>
-            <mat-panel-title> 查看答案 </mat-panel-title>
-            <mat-panel-description>
-              點擊{{panelOpenState() ? '關閉' : '查看'}}答案
-            </mat-panel-description>
-          </mat-expansion-panel-header>
-          @for(num of times; track num) {
-          <p>第{{num}}個回答</p>
+  <main class="content-area">
+    @if (activeTab() === 'list') {
+    <div class="table-container">
+      @if (respondents.length > 0) {
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>填寫人 Email</th>
+            <th>填寫時間</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of respondents; track $index) {
+          <tr>
+            <td>{{ $index + 1 }}</td>
+            <td>{{ row.email }}</td>
+            <td>{{ row.fillTime | date: 'yyyy-MM-dd HH:mm' }}</td>
+            <td>
+              <button class="btn-detail" (click)="viewUserDetail(row.email)">查看答案</button>
+            </td>
+          </tr>
           }
-        </mat-expansion-panel>
-      </mat-accordion>
+        </tbody>
+      </table>
+      } @else {
+      <div class="empty-state">目前尚無回覆資料</div>
+      }
     </div>
-  </div>
-</main>
+    }
+
+    @if (activeTab() === 'chart') {
+    <div class="charts-grid">
+      @for (stat of statisticsData; track stat.questionId) {
+      <div class="chart-card">
+        <h3 class="question-title">Q{{ $index + 1 }}. {{ stat.questionName }}</h3>
+
+        @if (stat.type === 'short-answer') {
+        <div class="expansion-container">
+          <details class="custom-expansion">
+            <summary class="expansion-header">
+              <div class="header-main">
+                <span class="click-hint">點擊查看</span>
+                <span class="response-count">所有回覆 (共 {{ stat.results.length }} 筆)</span>
+              </div>
+              <span class="chevron-icon">▼</span>
+            </summary>
+            <div class="expansion-content">
+              <div class="text-answer-list">
+                @for (ans of stat.results; track $index) {
+                <div class="answer-item">
+                  <span class="bullet">•</span>
+                  <p class="answer-body">{{ $any(ans).content }}</p>
+                </div>
+                } @empty {
+                <p class="no-data">尚無填寫建議</p>
+                }
+              </div>
+            </div>
+          </details>
+        </div>
+        } @else {
+        <div class="canvas-wrapper">
+          <canvas [id]="'chart-' + stat.questionId"></canvas>
+        </div>
+        }
+      </div>
+      }
+    </div>
+    }
+  </main>
+</div>
 
 
 <nav class="navBar">

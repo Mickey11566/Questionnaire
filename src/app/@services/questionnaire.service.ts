@@ -184,7 +184,7 @@ export class QuestionnaireService {
   }
 
   /**
-   * 設定預覽草稿。
+   * 設定預覽草稿
    * 用於：【預覽填寫問卷】
    */
   setDraftData(data: ReviewDraft): void {
@@ -192,7 +192,7 @@ export class QuestionnaireService {
   }
 
   /**
-   * 取得預覽草稿。
+   * 取得預覽草稿
    * 用於：【預覽填寫問卷】
    */
   getDraftData(): ReviewDraft | null {
@@ -200,7 +200,7 @@ export class QuestionnaireService {
   }
 
   /**
-   * 清空預覽草稿。
+   * 清空預覽草稿
    */
   clearDraftData(): void {
     this.currentFormDraft = null;

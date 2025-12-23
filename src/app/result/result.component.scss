@@ -1,27 +1,247 @@
-main {
+/* 全域容器 */
+.result-page {
+  background-color: #F5F2EA;
+  min-height: 100vh;
+  padding: 5vh 3vw;
+}
 
+.result-header {
+  margin: 3vh;
+  text-align: center;
+}
+
+/* 頁籤切換器 */
+.tab-switcher {
+  display: flex;
+  justify-content: center;
+  gap: 3vw;
+  margin-top: 5vh;
+}
+
+.tab-switcher button {
+  padding: 1.5vh 2vw;
+  border: 1px solid #dcd9d0;
+  border-radius: 15px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1vw;
+  font-weight: 700;
+  transition: all 0.3s;
+  color: #7d786a;
+}
+
+.tab-switcher button.active {
+  background-color: #c78039;
+  color: #F5F2EA;
+}
+
+/* 表格設計 */
+.table-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.custom-table th {
+  background-color: #ebb279;
+  padding: 15px;
+  text-align: left;
+  font-weight: 700;
+}
+
+.custom-table td {
+  padding: 15px;
+  border-bottom: 1px solid #f0ede4;
+  font-weight: 500;
+}
+
+.btn-detail {
+  background: none;
+  border: 1px solid #3e3a36;
+  padding: 1vh 1vw;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.btn-detail:hover {
+  background-color: #ebb279;
+  color: white;
+}
+
+/* 圖表網格設計 */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 3vh;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.chart-card {
+  background: white;
+  padding: 1vh 1vw;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e0ddd3;
+}
+
+.question-title {
+  margin-bottom: 1vh;
+  font-size: 1.1rem;
+  border-left: 4px solid #d5a972;
+  padding-left: 10px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  height: 400px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 50px;
+  color: #9e9a8d;
+}
+
+/* 讓 summary 容器看起來像一個可點擊的 Bar */
+.expansion-header {
+  list-style: none;
+  /* 隱藏原生箭頭 */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 12px 20px;
+  background-color: #ede9dc;
+  /* 你的背景主色 */
+  border: 1px solid #dcd9d0;
+  border-radius: 8px;
+  cursor: pointer;
+
+  transition: all 0.2s ease-in-out;
+  user-select: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  /* 輕微陰影增加立體感 */
+}
+
+/* 隱藏 Safari 的預設箭頭 */
+.expansion-header::-webkit-details-marker {
+  display: none;
+}
+
+/* 滑鼠移上去的視覺效果 */
+.expansion-header:hover {
+  background-color: #e5dfcf;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+  /* 輕微上浮感 */
+}
+
+/* 點擊時的按壓感 */
+.expansion-header:active {
+  transform: translateY(0px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* 內部文字區塊 */
+.header-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 提示標籤 */
+.click-hint {
+  font-size: 0.75rem;
+  background-color: #3e3a36;
+  /* 深色背景 */
+  color: #F5F2EA;
+  /* 你的淺色底色 */
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.response-count {
+  font-weight: 600;
+  color: #3e3a36;
+}
+
+/* 箭頭動畫 */
+.chevron-icon {
+  font-size: 0.8rem;
+  color: #8c765a;
+  transition: transform 0.3s ease;
+}
+
+/* 當 details 被打開時，旋轉箭頭並改變背景色 */
+details[open] .expansion-header {
+  background-color: #f79722;
+  /* 展開後變換顏色 */
+  color: white;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+details[open] .chevron-icon {
+  transform: rotate(180deg);
+  color: white;
+}
+
+details[open] .click-hint {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* 簡答題內容清單 */
+.text-answer-list {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
+  gap: 3vh;
+  padding: 2vh 0;
 }
 
-.resultContainer {
-  width: fit-content;
-  height: fit-content;
-  padding: 1vw;
+.answer-item {
   display: flex;
   align-items: flex-start;
-  border-radius: 5px;
-  border: 1px solid black;
+  font-weight: 500;
+  gap: 2vh;
+  border-bottom: 1px dashed #8a8882;
 }
 
-.formAnswer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.answer-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.bullet {
+  color: #d5a972;
+  /* 使用主題金色作為項目符號 */
+  font-weight: bold;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.answer-body {
+  margin: 0;
+  color: #3e3a36;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  word-break: break-all;
+}
+
+.no-data {
+  color: #9e9a8d;
+  font-style: italic;
+  text-align: center;
 }
 
 .navBar {
