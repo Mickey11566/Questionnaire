@@ -120,6 +120,7 @@ export class QuestionFormComponent {
 
     this.questionList.setDraftData(draftData);
     this.router.navigateByUrl('/review');
+
   }
 
   backList() {

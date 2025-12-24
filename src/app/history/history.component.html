@@ -1,0 +1,54 @@
+<div class="history-page">
+  <header class="history-header">
+    <h1>我的填寫紀錄</h1>
+  </header>
+
+  <main class="history-container">
+    @if (historyList().length > 0) {
+    <div class="history-grid">
+      @for (item of historyList(); track item.fillinId) {
+      <div class="history-card">
+        <div class="card-status" [class.completed]="true">已完成</div>
+        <div class="card-body">
+          <h2 class="survey-title">{{ item.surveyTitle }}</h2>
+          <div class="info-row">
+            <span class="label">填寫時間：</span>
+            <span class="value">{{ item.fillTime | date: 'yyyy-MM-dd' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">問卷編號：</span>
+            <span class="value">#{{ item.quizId }}</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <button class="btn-view" (click)="goToDetail(item)">
+            查看詳細回答 <span class="arrow">→</span>
+          </button>
+        </div>
+      </div>
+      }
+    </div>
+    } @else {
+    <div class="empty-state">
+      <div class="empty-icon">📝</div>
+      <p>您目前還沒有任何填寫紀錄</p>
+      <button class="btn-go-home" (click)="toList()">前往問卷列表</button>
+    </div>
+    }
+  </main>
+</div>
+
+
+<nav class="navBar">
+  <ul>
+    <li (click)="toList()" style="--i:#FF9966;--j:#FF5E62">
+      <span class="icon"> <mat-icon aria-hidden="false" aria-label="format_list_bulleted icon"
+          fontIcon="format_list_bulleted"></mat-icon></span>
+      <span class="title">問卷清單</span>
+    </li>
+    <li (click)="logout()" style="--i:#FF9966;--j:#FF5E62">
+      <span class="icon"> <mat-icon aria-hidden="false" aria-label="logout icon" fontIcon="logout"></mat-icon></span>
+      <span class="title">登出</span>
+    </li>
+  </ul>
+</nav>

@@ -67,7 +67,7 @@ export class ManageComponent {
       this.listData = data;
       this.allfilteredData = [...this.listData];
 
-      // 建議: 直接在 data 載入後執行 searchForm，以統一初始化和篩選流程
+      // 在 data 載入後執行 searchForm，以統一初始化和篩選流程
       this.searchForm();
     });
   }
