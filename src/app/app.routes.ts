@@ -11,6 +11,7 @@ import { ManageComponent } from './manage/manage.component';
 import { AddFormComponent } from './add-form/add-form.component';
 import { CheckFormComponent } from './check-form/check-form.component';
 import { HistoryComponent } from './history/history.component';
+import { UserDetailComponent } from './user-detail/user-detail.component';
 
 export const routes: Routes = [
   {
@@ -34,9 +35,12 @@ export const routes: Routes = [
   },
 
   {
-    path: "result", component: ResultComponent,
+    path: "result/:id", component: ResultComponent,
   },
-
+  {
+    path: 'result/:id/detail/:email',
+    component: UserDetailComponent
+  },
   {
     path: "login", component: LoginComponent,
   },

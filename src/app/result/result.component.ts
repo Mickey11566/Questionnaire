@@ -1,7 +1,8 @@
+import { QuestionnaireService } from './../@services/questionnaire.service';
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { Chart, registerables } from 'chart.js/auto';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -11,7 +12,11 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { ChartResult, StatisticItem } from '../@interfaces/list-item';
+import { StatisticItem } from '../@interfaces/list-item';
+import { ChangeDetectorRef } from '@angular/core';
+
+// sweetalert
+import Swal from 'sweetalert2';
 
 Chart.register(...registerables);
 
@@ -36,86 +41,164 @@ Chart.register(...registerables);
 
 export class ResultComponent {
   activeTab = signal<'list' | 'chart'>('list');
-  surveyTitle = '公司滿意度調查';
+  surveyTitle = '';
+  // 回覆列表資料
+  respondents: any[] = [];
+  // 儲存問卷完整資訊，包含題目名稱
+  fullQuizQuestions: any[] = [];
   displayedColumns: string[] = ['id', 'email', 'fillTime', 'action'];
+  statisticsData: StatisticItem[] = [];
+  quizId = signal<number | null>(null);
 
-  // 1. 回覆列表資料
-  respondents = [
-    { email: 'user1@example.com', fillTime: new Date() },
-    { email: 'user2@example.com', fillTime: new Date() }
-  ];
+  isDetailVisible = signal(false);
+  selectedEmail = signal('');
 
-  // 2. 統計圖表資料
-  // 你可以將這段賦值給你的 statisticsData 變數
-  statisticsData = [
-    {
-      questionId: 1,
-      questionName: '1. 您對目前工作環境的滿意度為何？',
-      type: 'single', // 顯示圓餅圖 (Pie Chart)
-      results: [
-        { label: '非常滿意', count: 25 },
-        { label: '滿意', count: 40 },
-        { label: '普通', count: 15 },
-        { label: '不滿意', count: 5 },
-        { label: '非常不滿意', count: 2 }
-      ]
-    },
-    {
-      questionId: 2,
-      questionName: '2. 您最常使用辦公室的哪些公共設施？ (多選)',
-      type: 'multiple', // 顯示長條圖 (Bar Chart)
-      results: [
-        { label: '研磨咖啡機', count: 55 },
-        { label: '微波爐/電冰箱', count: 32 },
-        { label: '舒壓休息區', count: 28 },
-        { label: '站立式辦公桌', count: 12 },
-        { label: '健身器材', count: 8 }
-      ]
-    },
-    {
-      questionId: 3,
-      questionName: '3. 對於公司的午餐補助政策，您的看法是？',
-      type: 'single',
-      results: [
-        { label: '非常認同', count: 30 },
-        { label: '尚可接受', count: 18 },
-        { label: '希望調整', count: 45 }
-      ]
-    },
-    {
-      questionId: 4,
-      questionName: '4. 除了上述問題，您還有任何建議嗎？',
-      type: 'short-answer', // 適合顯示：條列式清單 (Details/Summary)
-      results: [
-        { content: '希望冷氣可以再調弱一點，靠近窗戶的位置很冷。' },
-        { content: '建議增加蔬食餐盒的選項。' },
-        { content: '內網系統的操作介面建議更新，目前的有點過時。' },
-        { content: '希望每個月能有一次固定的團隊聚餐補助。' },
-        { content: '洗手間的清潔頻率可以再增加。' }
-      ]
+  constructor(private router: Router, private route: ActivatedRoute, private questionnaireService: QuestionnaireService, private cdr: ChangeDetectorRef) {
+    const navigation = this.router.getCurrentNavigation();
+    const stateTitle = navigation?.extras.state?.['title'];
+
+    if (stateTitle) {
+      this.surveyTitle = stateTitle;
     }
-  ];
-
-  readonly panelOpenState = signal(false)
-
-  constructor(private router: Router) { }
-
-  ngOnInit(): void {
-
   }
 
-  ngAfterViewInit(): void {
-    // 若初始頁籤是圖表才執行，或者監聽 activeTab 變更時重繪
+  closeDetail() {
+    this.isDetailVisible.set(false);
+  }
+
+  ngOnInit(): void {
+    this.route.paramMap.subscribe(params => {
+      const idStr = params.get('id');
+      if (idStr) {
+        const idNum = Number(idStr);
+        this.quizId.set(idNum);
+
+        // 使用修正後的 Service 或分開抓取
+        // 取得題目列表
+        this.questionnaireService.getQuestionsByQuizId(idNum).subscribe(data => {
+          if (data) {
+            this.fullQuizQuestions = data; // data 應該為 Question[]
+
+            // 拿到題目名稱之後，再抓統計資料
+            this.loadStatistics(idNum);
+          }
+        });
+
+        // 更新標題 (避免重新整理時標題消失)
+        this.fetchSurveyTitle(idNum);
+
+        // 讀取回覆者列表
+        this.loadRespondents(idNum);
+      }
+    });
+  }
+
+  loadRespondents(id: number) {
+    this.questionnaireService.getQuizRespondents(id).subscribe({
+      next: (res) => {
+        if (res && res.code === 200 && res.respondentDTOList) {
+          this.respondents = res.respondentDTOList.map((item: any) => ({
+            email: item.email,
+            fillTime: new Date(item.fillinDate)
+          }));
+
+          // 觸發更新
+          this.cdr.detectChanges();
+        }
+      }
+    });
+  }
+
+  fetchSurveyTitle(id: number) {
+    this.questionnaireService.getSurveyListItems().subscribe({
+      next: (list) => {
+        const currentSurvey = list.find(item => item.id === id);
+        if (currentSurvey) {
+          this.surveyTitle = currentSurvey.name;
+        } else {
+          this.surveyTitle = '未知問卷';
+        }
+      },
+      error: () => this.surveyTitle = '無法讀取標題'
+    });
+  }
+
+  loadStatistics(id: number) {
+    this.questionnaireService.getStatistics(id).subscribe({
+      next: (res) => {
+        if (res && res.code === 200) {
+          this.processApiData(res.statisticsList);
+        }
+      },
+      error: (err) =>
+        Swal.fire({
+          title: "API 請求失敗!",
+          text: err,
+          icon: "error",
+          timer: 1500,
+          showConfirmButton: false
+        }),
+
+    });
+  }
+
+  // 封裝資料轉換邏輯
+  private processApiData(apiList: any[]) {
+    this.statisticsData = apiList.map((item: any) => {
+      // 找尋原始題目資訊
+      const foundQuestion = this.fullQuizQuestions.find(q => q.questionId === item.questionId);
+
+      // 取得問題的Type資料型態
+      const rawType = foundQuestion?.type;
+
+      // 對照型態
+      let chartType: 'short-answer' | 'single' | 'multiple';
+
+      // 這裡要跟 HTML @if 條件對上
+      if (rawType === 'multiple') {
+        chartType = 'multiple';
+      } else if (rawType === 'short-answer' || rawType === 'text') {
+        chartType = 'short-answer';
+      } else {
+        chartType = 'single';
+      }
+
+      return {
+        questionId: item.questionId,
+        questionName: foundQuestion?.question || `問題 ${item.questionId}`,
+        type: chartType,
+        results: item.opCountList.map((op: any) => ({
+          label: op.optionName,
+          count: op.count,
+          content: op.optionName
+        }))
+      };
+    });
+
     if (this.activeTab() === 'chart') {
       this.renderCharts();
     }
   }
 
-  // --- 頁面操作方法 ---
+  readonly panelOpenState = signal(false)
+
+  ngAfterViewInit(): void {
+    // 若頁面為 chart 才執行渲染圖表
+    if (this.activeTab() === 'chart') {
+      this.renderCharts();
+    }
+  }
+
   switchTab(tab: 'list' | 'chart'): void {
     this.activeTab.set(tab);
+
     if (tab === 'chart') {
-      this.renderCharts();
+      // 給50毫秒的時間來處理 @if 的 DOM 切換
+      setTimeout(() => {
+        if (this.statisticsData && this.statisticsData.length > 0) {
+          this.renderCharts();
+        }
+      }, 50);
     }
   }
 
@@ -132,47 +215,61 @@ export class ResultComponent {
 
     setTimeout(() => {
       this.statisticsData.forEach((stat) => {
-        // 3. 關鍵修正：透過 type 判定，並使用強制轉型 (Type Assertion)
-        if (stat.type === 'single' || stat.type === 'multiple') {
-          const canvasId = `chart-${stat.questionId}`;
-          const ctx = document.getElementById(canvasId) as HTMLCanvasElement;
+        // 如果是問答題，改由 HTML 顯示列表
+        if (stat.type === 'short-answer') return;
 
-          // 將 results 強制轉為 ChartResult[]，讓 TypeScript 知道這裡一定有 label 和 count
-          const chartResults = stat.results as ChartResult[];
+        const canvasId = `chart-${stat.questionId}`;
+        const canvasElement = document.getElementById(canvasId) as HTMLCanvasElement;
 
+        if (canvasElement) {
+          const ctx = canvasElement.getContext('2d');
           if (ctx) {
+            // 關鍵：根據 type 決定圖表類型
+            const isMultiple = stat.type === 'multiple';
+
             const newChart = new Chart(ctx, {
-              type: stat.type === 'single' ? 'pie' : 'bar',
+              type: isMultiple ? 'bar' : 'pie', // 多選用 bar，單選用 pie
               data: {
-                labels: chartResults.map(r => r.label), // 這裡就不會報錯了
+                labels: stat.results.map((r: any) => r.label),
                 datasets: [{
                   label: '票數',
-                  data: chartResults.map(r => r.count), // 這裡也不會報錯了
-                  backgroundColor: ['#d5a972', '#a68a64', '#e8d8c3', '#8c765a'],
-                  hoverOffset: stat.type === 'single' ? 20 : 0
+                  data: stat.results.map((r: any) => r.count),
+                  backgroundColor: isMultiple
+                    ? ['#d5a972', '#a68a64', '#e8d8c3', '#8c765a']// 長條圖顏色
+                    : ['#d5a972', '#a68a64', '#e8d8c3', '#8c765a'], // 圓餅圖顏色
+                  hoverOffset: 20
+
                 }]
               },
               options: {
                 responsive: true,
-                maintainAspectRatio: false
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: { display: !isMultiple } // 長條圖隱藏圖例
+                },
+                scales: isMultiple ? { // 長條圖座標軸設定
+                  y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                } : {}
               }
             });
             this.chartInstances.push(newChart);
           }
         }
       });
-    }, 100);
+    }, 200);
   }
 
   viewUserDetail(email: string) {
-    console.log('查看使用者詳情：', email);
-  }
+    const quizId = this.quizId(); // 取得目前的問卷 ID
 
+    if (quizId && email) {
+      this.router.navigate(['/result', quizId, 'detail', email]);
+    }
+  }
 
   checkList() {
     this.router.navigateByUrl('manage');
   }
-
 
   logout() {
     this.router.navigateByUrl('login');

@@ -1,0 +1,35 @@
+<div class="page-wrapper">
+  <nav class="top-nav">
+    <div class="nav-content">
+      <div class="user-info">
+        <span class="label">填寫者：</span>
+        <span class="email-text">{{ email() }}</span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="content-container">
+    <div class="answer-stack">
+      @for (ans of userAnswers(); track ans.questionId; let i = $index) {
+      <div class="answer-card">
+        <div class="card-header">
+          <span class="q-number">問題 {{ i + 1 }}</span>
+          <span class="q-tag" [ngClass]="ans.type">{{ getTypeLabel(ans.type) }}</span>
+        </div>
+
+        <h2 class="question-text">{{ ans.questionTitle }}</h2>
+
+        <div class="answer-box">
+          <div class="answer-value">
+            {{ ans.answer || '（此題未填寫）' }}
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+  </main>
+
+  <button class="back-btn" (click)="goBack()">
+    返回統計列表
+  </button>
+</div>

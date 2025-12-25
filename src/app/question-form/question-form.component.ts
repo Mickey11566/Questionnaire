@@ -29,7 +29,7 @@ export class QuestionFormComponent {
 
     if (quizId) {
       // 步驟 1: 取得問卷基本資訊 (標題、描述、日期)
-      this.questionList.getSurveyById(quizId).subscribe(survey => {
+      this.questionList.getSurveyDetail(quizId).subscribe(survey => {
         if (survey) {
           this.surveyData = survey; // 賦值給 surveyData，解鎖 HTML 顯示
 

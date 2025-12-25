@@ -29,8 +29,9 @@ CREATE TABLE `quiz` (
   `start_date` date DEFAULT NULL,
   `end_date` date DEFAULT NULL,
   `published` tinyint DEFAULT '0',
+  `is_deleted` tinyint DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39,7 +40,7 @@ CREATE TABLE `quiz` (
 
 LOCK TABLES `quiz` WRITE;
 /*!40000 ALTER TABLE `quiz` DISABLE KEYS */;
-INSERT INTO `quiz` VALUES (3,'主管領導風格評估','領導風格影響團隊氛圍與績效。你認為主管在激勵與指導上表現如何？','2025-12-17','2025-12-20',1),(4,'顧客服務品質調查','顧客滿意是品牌成功的關鍵。你認為我們的服務流程是否友善且高效？','2025-12-17','2025-12-25',0),(5,'年度活動回饋問卷','每一次活動的舉辦，都是團隊努力的成果。你的參與體驗如何？','2025-12-25','2025-12-30',1),(6,'福利制度滿意度調查','福利制度不僅反映企業文化，也影響員工忠誠度。你對現行制度的滿意度如何？','2025-12-22','2025-12-31',1),(7,'公司整體滿意度調查','公司整體的發展與員工感受息息相關。你的滿意度能幫助我們持續改善。','2025-12-31','2026-01-10',0),(8,'晚安','你好','2025-12-01','2025-12-16',0);
+INSERT INTO `quiz` VALUES (3,'主管領導風格評估','領導風格影響團隊氛圍與績效。你認為主管在激勵與指導上表現如何？','2025-12-17','2025-12-20',1,0),(4,'顧客服務品質調查','顧客滿意是品牌成功的關鍵。你認為我們的服務流程是否友善且高效？','2025-12-17','2025-12-25',0,0),(5,'年度活動回饋問卷','每一次活動的舉辦，都是團隊努力的成果。你的參與體驗如何？','2025-12-25','2025-12-30',1,0),(6,'福利制度滿意度調查','福利制度不僅反映企業文化，也影響員工忠誠度。你對現行制度的滿意度如何？','2025-12-22','2025-12-31',1,0),(7,'公司整體滿意度調查','公司整體的發展與員工感受息息相關。你的滿意度能幫助我們持續改善。','2025-12-21','2025-12-24',0,0),(8,'晚安','你好','2025-12-01','2025-12-16',0,1),(11,'這是一筆測試','我測試一下','2025-12-24','2025-12-31',0,1),(12,'1225問題','該問卷為測試用','2025-12-24','2025-12-28',0,0);
 /*!40000 ALTER TABLE `quiz` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -52,4 +53,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-19 16:31:12
+-- Dump completed on 2025-12-25 23:08:15

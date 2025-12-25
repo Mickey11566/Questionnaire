@@ -4,13 +4,11 @@ import { Component } from '@angular/core';
 
 // sweetalert
 import Swal from 'sweetalert2';
-import { FormResponse, FullSurvey, Question, ReviewDraft, ReviewItem, UserAnswer } from '../@interfaces/list-item';
+import { FormResponse, FullSurvey, Question, ReviewDraft, ReviewItem, ReviewQuestion, UserAnswer } from '../@interfaces/list-item';
 import { CommonModule } from '@angular/common';
+import { forkJoin } from 'rxjs';
 
-// 這是 Review 畫面上要顯示的資料結構
-export interface ReviewQuestion extends Question {
-  userAnswerText: string;
-}
+
 
 @Component({
   selector: 'app-review',
@@ -48,21 +46,29 @@ export class ReviewComponent {
 
     const quizId = this.draftData.surveyId;
 
-    // 1. 同時獲取問卷資訊與問題列表
-    this.questionnaireService.getSurveyById(quizId).subscribe(survey => {
-      if (survey) {
-        this.surveyData = survey;
+    // 使用 forkJoin 同時發出兩個請求，並等待它們全部完成
+    forkJoin({
+      survey: this.questionnaireService.getSurveyDetail(quizId),
+      questions: this.questionnaireService.getQuestionsByQuizId(quizId)
+    }).subscribe({
+      next: ({ survey, questions }) => {
+        if (survey && questions) {
+          // 將兩者組合成一個完整的物件
+          this.surveyData = {
+            ...survey,
+            questions: questions
+          };
 
-        // 2. 必須再抓一次問題列表，否則 survey.questions 可能是空的
-        this.questionnaireService.getQuestionsByQuizId(quizId).subscribe(questions => {
-          // 將問題裝進 surveyData 供 mapAnswersToQuestions 使用
-          this.surveyData!.questions = questions;
-
+          // 確保資料完整後，再執行對照邏輯
           if (this.draftData) {
-            this.mapAnswersToQuestions(this.surveyData!, this.draftData.answers);
+            this.mapAnswersToQuestions(this.surveyData, this.draftData.answers);
           }
-        });
-      } else {
+        } else {
+          this.router.navigate(['/list']);
+        }
+      },
+      error: (err) => {
+        console.error('載入預覽資料失敗', err);
         this.router.navigate(['/list']);
       }
     });
@@ -136,12 +142,11 @@ export class ReviewComponent {
         answerVoList = question.optionsList
           .filter(opt => selectedOptions.includes(opt.optionName))
           .map(opt => ({
-            check: true, // 根據範例，check 似乎是放 questionId
+            check: true,
             code: opt.code,
             optionName: opt.optionName
           }));
       } else if (question.type === 'short-answer') {
-        // 簡答題通常 code 為 0 或不傳，optionName 放填寫的文字
         answerVoList = [{
           check: true,
           code: 1,
@@ -168,7 +173,10 @@ export class ReviewComponent {
     this.questionnaireService.submitSurvey(payload).subscribe({
       next: (res) => {
         if (res.code === 200) {
-          Swal.fire({ title: "提交成功！", icon: "success", timer: 1500 });
+          Swal.fire({
+            title: "提交成功！", icon: "success", timer: 1200,
+            showConfirmButton: false
+          });
           this.questionnaireService.clearDraftData();
           this.router.navigate(['/list']);
         } else {

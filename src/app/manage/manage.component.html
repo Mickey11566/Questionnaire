@@ -66,7 +66,7 @@
 
           <td class="action-cell">
             @if (item.status === "已結束") {
-            <button (click)="toResult()" class="result-button">查看</button>
+            <button (click)="toResult(item.id, item.name)" class="result-button">查看</button>
             }
           </td>
 

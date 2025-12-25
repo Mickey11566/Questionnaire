@@ -29,6 +29,11 @@ export interface Question {
   optionsList: QuestionOption[];
 }
 
+// Review 顯示的資料結構
+export interface ReviewQuestion extends Question {
+  userAnswerText: string;
+}
+
 // 對齊後端
 export interface QuizRequest {
   id?: number;

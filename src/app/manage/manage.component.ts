@@ -49,7 +49,7 @@ export class ManageComponent {
   // 使用 Set 來追蹤所有被勾選的項目 ID
   selectedItemIds: Set<number> = new Set<number>();
 
-  constructor(private questionList: QuestionnaireService, private route: ActivatedRoute, private router: Router) { }
+  constructor(private questionService: QuestionnaireService, private route: ActivatedRoute, private router: Router) { }
 
 
   ngOnInit(): void {
@@ -63,7 +63,7 @@ export class ManageComponent {
   }
 
   loadData(): void {
-    this.questionList.getSurveyListItems().subscribe(data => {
+    this.questionService.getSurveyListItems().subscribe(data => {
       this.listData = data;
       this.allfilteredData = [...this.listData];
 
@@ -72,10 +72,10 @@ export class ManageComponent {
     });
   }
   /**
-     * 處理 Checkbox 狀態變更
-     * @param id 列表項目的唯一 ID
-     * @param isChecked Checkbox 是否被勾選
-     */
+   * 處理 Checkbox 狀態變更
+   * @param id 列表項目的唯一 ID
+   * @param isChecked Checkbox 是否被勾選
+  */
   onCheckboxChange(id: number, changeEvent: Event): void {
     const isChecked = (changeEvent.target as HTMLInputElement).checked;
 
@@ -108,39 +108,51 @@ export class ManageComponent {
       cancelButtonText: "取消"
     }).then((result) => {
       if (result.isConfirmed) {
-        // 2. 執行刪除邏輯
 
-        // 2.1. 過濾原始/篩選後的資料列表 (allfilteredData)
-        this.allfilteredData = this.allfilteredData.filter(item =>
-          !this.selectedItemIds.has(item.id)
-        );
+        // 將 Set 轉換成後端要的陣列格式 如若要刪除編號2, 3, 4的問卷則為[2, 3, 4]
+        const idsToDelete = Array.from(this.selectedItemIds);
 
-        // 2.2. 重新計算總筆數和總頁數
-        this.totalItems = this.allfilteredData.length;
-        this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+        // 呼叫Service中的 deleteQuizzes 功能進行刪除
+        this.questionService.deleteQuizzes(idsToDelete).subscribe({
+          next: (res) => {
 
-        // 2.3. 檢查並調整當前頁碼 (防止頁碼無效)
-        // 如果當前頁碼超過了新的總頁數，將頁碼設置為新的最後一頁（如果總頁數大於 0）
-        if (this.currentPage > this.totalPages && this.totalPages > 0) {
-          this.currentPage = this.totalPages;
-        } else if (this.totalItems === 0) {
-          // 如果所有資料都被刪除，將頁碼設為 1
-          this.currentPage = 1;
-        }
+            // 從原始資料中過濾掉已刪除的項目
+            this.listData = this.listData.filter(item => !this.selectedItemIds.has(item.id));
 
-        // 2.4. 呼叫 updatePagedData() 重新載入當前頁的數據
-        // 這一行將會從 allfilteredData 中抓取新的資料來填滿 pagedData，解決項目不足的問題。
-        this.updatePagedData();
+            // 更新篩選後的列表
+            this.allfilteredData = this.allfilteredData.filter(item =>
+              !this.selectedItemIds.has(item.id)
+            );
 
-        // 2.5. 清空選取狀態
-        this.selectedItemIds.clear();
+            // 重新計算分頁
+            this.totalItems = this.allfilteredData.length;
+            this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
 
-        // 3. 顯示刪除成功的通知
-        Swal.fire({
-          title: "刪除成功！",
-          icon: "success",
-          timer: 1500,
-          showConfirmButton: false
+            if (this.currentPage > this.totalPages && this.totalPages > 0) {
+              this.currentPage = this.totalPages;
+            } else if (this.totalItems === 0) {
+              this.currentPage = 1;
+            }
+
+            // 更新畫面並清空選取
+            this.updatePagedData();
+            this.selectedItemIds.clear();
+
+            Swal.fire({
+              title: "刪除成功！",
+              icon: "success",
+              timer: 1500,
+              showConfirmButton: false
+            });
+          },
+          error: (err) => {
+            console.error("刪除失敗", err);
+            Swal.fire({
+              title: "刪除失敗",
+              text: err.error?.message || "主機通訊錯誤",
+              icon: "error"
+            });
+          }
         });
       }
     });
@@ -170,8 +182,8 @@ export class ManageComponent {
     }
   }
 
-  toResult() {
-    this.router.navigateByUrl("result");
+  toResult(id: number, title: string) {
+    this.router.navigate(['/result', id], { state: { title: title } });
   }
 
   // 處理切換到上一頁
@@ -191,14 +203,13 @@ export class ManageComponent {
 
   //查看表單
   checkout(id: number) {
-    // this.questionList.name = this.userData.name;
+    // this.questionService.name = this.userData.name;
     this.router.navigate(['/checkForm', id]);
   }
 
   // 修改表單
   revise(surveyId: number): void {
-    // 假設您的編輯頁面路由是 '/survey/edit'
-    // 我們使用查詢參數 (queryParams) 來傳遞 ID
+    // 使用查詢參數 (queryParams) 來傳遞 ID
     this.router.navigate(['/survey/edit'], {
       queryParams: {
         id: surveyId

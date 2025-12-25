@@ -95,7 +95,7 @@ export class AddFormComponent {
         if (id) {
           this.isEditMode = true;
           this.surveyIdToEdit = +id; // 將字串轉換為數字
-          return this.questionnaireService.getSurveyById(this.surveyIdToEdit); // Service 中需要新增此方法
+          return this.questionnaireService.getSurveyDetail(this.surveyIdToEdit); // Service 中需要新增此方法
         } else {
           this.isEditMode = false;
           return of(null); // 沒有 ID 則返回空
@@ -276,7 +276,10 @@ export class AddFormComponent {
     request$.subscribe({
       next: (res) => {
         if (res.code === 200) {
-          Swal.fire({ title: this.isEditMode ? "修改成功！" : "新增成功！", icon: "success", timer: 1200 });
+          Swal.fire({
+            title: this.isEditMode ? "修改成功！" : "新增成功！", icon: "success", timer: 1200,
+            showConfirmButton: false
+          });
           setTimeout(() => this.toList(), 1300);
         } else {
           Swal.fire("錯誤", res.message, "error");

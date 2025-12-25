@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ListItem, FullSurvey, FormResponse, ReviewDraft, Question, QuizRequest } from './../@interfaces/list-item';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, map } from 'rxjs';
+import { BehaviorSubject, Observable, map, forkJoin } from 'rxjs';
 
 
 @Injectable({
@@ -106,14 +106,14 @@ export class QuestionnaireService {
    * 用於：【填寫問卷】、【修改問卷】
    * @param id 問卷編號
    */
-  getSurveyById(id: number): Observable<FullSurvey | undefined> {
-    // 從 API 取得所有列表並從中找出那一筆
-    return this.getSurveyListItems().pipe(
-      map(list => {
-        const found = list.find(item => item.id === id);
-        if (found) {
-          // 轉換為 FullSurvey 格式 (補上 questions 陣列)
-          return { ...found, questions: [] } as FullSurvey;
+  getSurveyDetail(id: number): Observable<FullSurvey | undefined> {
+    return forkJoin({
+      info: this.getSurveyListItems().pipe(map(list => list.find(item => item.id === id))),
+      questions: this.getQuestionsByQuizId(id)
+    }).pipe(
+      map(({ info, questions }) => {
+        if (info) {
+          return { ...info, questions: questions } as FullSurvey;
         }
         return undefined;
       })
@@ -140,7 +140,7 @@ export class QuestionnaireService {
   /**
    * 新增問卷的方法：只更新主要的 fullSurveyData 陣列。
    * 用於：【新增問卷】
-   * @param newSurvey 完整的問卷結構
+   * @param newSurvey
    */
 
   createQuiz(payload: QuizRequest): Observable<any> {
@@ -150,10 +150,38 @@ export class QuestionnaireService {
   /**
    * 更新問卷的方法：只更新主要的 fullSurveyData 陣列。
    * 用於：【修改問卷】
-   * @param updatedSurvey 更新後的問卷結構
+   * @param updatedSurvey
    */
   updateSurvey(payload: QuizRequest): Observable<any> {
     return this.http.post<any>('http://localhost:8080/quiz/update', payload);
+  }
+
+  /**
+   * 刪除問卷的方法：更新對應 quiz_id 資料的 is_deleted。
+   * 用於：【刪除問卷】
+   * @param deleteQuizzes
+   */
+  deleteQuizzes(ids: number[]): Observable<any> {
+    const url = 'http://localhost:8080/quiz/delete';
+    return this.http.post(url, ids);
+  }
+
+  /**
+ * 統計問卷的方法：取得對應 quiz_id 資料的統計
+ * 用於：【取得問卷資料並進行統計】
+ * @param getStatistics
+ */
+  getStatistics(quizId: number): Observable<any> {
+    return this.http.get(`http://localhost:8080/quiz/stat?quizId=${quizId}`);
+  }
+
+  /**
+* 統計回答者的方法：取得對應 quiz_id 資料的回答者email列表
+* 用於：【取得對應問卷的回答者Email】
+* @param getQuizRespondents
+*/
+  getQuizRespondents(quizId: number): Observable<any> {
+    return this.http.post(`http://localhost:8080/quiz/respondents`, quizId);
   }
 
   // ----------------------------------------------------------------

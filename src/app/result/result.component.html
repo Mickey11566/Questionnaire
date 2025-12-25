@@ -1,6 +1,6 @@
 <div class="result-page">
   <header class="result-header">
-    <h1>問卷統計：{{ surveyTitle }}</h1>
+    <h1>問卷統計：{{ surveyTitle }} (#{{ quizId() }})</h1>
     <div class="tab-switcher">
       <button [class.active]="activeTab() === 'list'" (click)="switchTab('list')">問卷回覆列表</button>
       <button [class.active]="activeTab() === 'chart'" (click)="switchTab('chart')">統計結果圖表</button>
@@ -25,7 +25,7 @@
           <tr>
             <td>{{ $index + 1 }}</td>
             <td>{{ row.email }}</td>
-            <td>{{ row.fillTime | date: 'yyyy-MM-dd HH:mm' }}</td>
+            <td>{{ row.fillTime | date: 'yyyy-MM-dd' }}</td>
             <td>
               <button class="btn-detail" (click)="viewUserDetail(row.email)">查看答案</button>
             </td>
@@ -43,7 +43,9 @@
     <div class="charts-grid">
       @for (stat of statisticsData; track stat.questionId) {
       <div class="chart-card">
-        <h3 class="question-title">Q{{ $index + 1 }}. {{ stat.questionName }}</h3>
+        <h3 class="question-title">
+          <small>Q{{ stat.questionId }}.</small> {{ stat.questionName }}
+        </h3>
 
         @if (stat.type === 'short-answer') {
         <div class="expansion-container">
@@ -75,12 +77,13 @@
         </div>
         }
       </div>
+      } @empty {
+      <div class="empty-state">正在加載統計數據...</div>
       }
     </div>
     }
   </main>
 </div>
-
 
 <nav class="navBar">
   <ul>

@@ -30,7 +30,7 @@ export class CheckFormComponent {
 
         // 同時抓取：問卷基本資訊 & 問題列表
         return forkJoin({
-          survey: this.questionnaireService.getSurveyById(surveyId),
+          survey: this.questionnaireService.getSurveyDetail(surveyId),
           questions: this.questionnaireService.getQuestionsByQuizId(surveyId)
         });
       })
