@@ -44,7 +44,8 @@ export class ManageComponent {
 
   // 儲存當前頁面要顯示的資料 (用於表格顯示)
   pagedData: ListItem[] = [];
-  listData: ListItem[] = []; // 存放所有列表資料
+  quizzes: ListItem[] = []; // 存放所有列表資料
+
 
   // 使用 Set 來追蹤所有被勾選的項目 ID
   selectedItemIds: Set<number> = new Set<number>();
@@ -64,8 +65,8 @@ export class ManageComponent {
 
   loadData(): void {
     this.questionService.getSurveyListItems().subscribe(data => {
-      this.listData = data;
-      this.allfilteredData = [...this.listData];
+      this.quizzes = data;
+      this.allfilteredData = [...this.quizzes];
 
       // 在 data 載入後執行 searchForm，以統一初始化和篩選流程
       this.searchForm();
@@ -117,7 +118,7 @@ export class ManageComponent {
           next: (res) => {
 
             // 從原始資料中過濾掉已刪除的項目
-            this.listData = this.listData.filter(item => !this.selectedItemIds.has(item.id));
+            this.quizzes = this.quizzes.filter(item => !this.selectedItemIds.has(item.id));
 
             // 更新篩選後的列表
             this.allfilteredData = this.allfilteredData.filter(item =>
@@ -219,7 +220,14 @@ export class ManageComponent {
 
   // 搜尋與篩選邏輯
   searchForm() {
-    let tempArray = [...this.listData];
+    if (!this.quizzes || this.quizzes.length == 0) {
+      this.allfilteredData = [];
+      this.updatePagedData();
+      return;
+    }
+
+
+    let tempArray = [...this.quizzes];
 
     // 根據「問卷名稱」進行篩選 (如果 searchData 有值)
     if (this.searchData) {
@@ -233,14 +241,22 @@ export class ManageComponent {
     if (this.startDate || this.endDate) {
       tempArray = tempArray.filter(data => {
         // 將資料中的日期字串轉換為 Date 物件，以便比較
-        const itemStartDate = new Date(data.startDate);
-        const itemEndDate = new Date(data.endDate);
+        const itemStartDate = new Date(data.startDate).getTime();
+        const itemEndDate = new Date(data.endDate).getTime();
 
-        // 將使用者選擇的日期進行調整，以便進行區間判斷
-        // 開始日期：應當包含當日（所以時間用 00:00:00）
-        const searchStart = this.startDate ? new Date(this.startDate.setHours(0, 0, 0, 0)) : null;
-        // 結束日期：應當包含當日（所以時間用 23:59:59）
-        const searchEnd = this.endDate ? new Date(this.endDate.setHours(23, 59, 59, 999)) : null;
+        let searchStart = null;
+        if (this.startDate) {
+          const d = new Date(this.startDate);
+          d.setHours(0, 0, 0, 0);
+          searchStart = d.getTime();
+        }
+
+        let searchEnd = null;
+        if (this.endDate) {
+          const d = new Date(this.endDate);
+          d.setHours(29, 59, 59, 999);
+          searchEnd = d.getTime();
+        }
 
 
         // 判斷問卷的區間是否與搜尋區間有交集
@@ -265,6 +281,7 @@ export class ManageComponent {
     // 4. 更新當前頁面顯示的數據
     this.updatePagedData();
   }
+
 
   addForm() {
     this.router.navigateByUrl("addForm");
